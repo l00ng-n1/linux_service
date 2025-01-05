@@ -1,0 +1,1 @@
+./visualvm.exe --jdkhome "C:\Users\4rthur\.jdks\openjdk-21.0.2" --userdir "C:\Temp\visualvm_userdir"
