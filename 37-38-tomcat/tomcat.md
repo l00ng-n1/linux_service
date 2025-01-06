@@ -1304,6 +1304,12 @@ echo 'Tomcat jsp page from ubuntu<br />SessionID = <span style="color:blue"><%=s
 
 在上述 Nginx 代理多机 Tomcat 的架构中，我们在 Nginx 代理节点通过调度算法实现会话绑定，将 来自于同一客户端的请求调度到同相的后端服务器上，在这种情况下，如果后端 Tomcat 服务不可用， Nginx 在检测后会将请求调度到可用的后端节点，则原来的 Session 数据还是会丢失。
 
+会话保持方法
+
+*   会话绑定
+*   会话复制
+*   会话共享
+
 ### tomcat的会话复制
 
 [Apache Tomcat 9 (9.0.98) - Clustering/Session Replication How-To](https://tomcat.apache.org/tomcat-9.0-doc/cluster-howto.html)
