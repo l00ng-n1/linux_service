@@ -235,6 +235,12 @@ mysql> show master status;
 # mysql-bin.000001 与 879
 ```
 
+查看从节点
+
+```sql
+show slave hosts;
+```
+
 
 
 ### 从
@@ -2043,9 +2049,10 @@ rsync -av .ssh 10.0.0.222:/root/
 rsync -av .ssh 10.0.0.223:/root/
 rsync -av .ssh 10.0.0.224:/root/
 # 或者
-scp -r .ssh 10.0.0.8:/root/
-scp -r .ssh 10.0.0.18:/root/
-scp -r .ssh 10.0.0.28:/root/
+scp -r .ssh 10.0.0.221:/root/
+scp -r .ssh 10.0.0.222:/root/
+scp -r .ssh 10.0.0.223:/root/
+scp -r .ssh 10.0.0.224:/root/
 ```
 
 
@@ -2197,6 +2204,9 @@ systemctl restart mysql.service
 ```sql
 CHANGE MASTER TO MASTER_HOST='10.0.0.221', MASTER_USER='repluser', MASTER_PASSWORD='123456', MASTER_PORT=3306, MASTER_AUTO_POSITION=1;
 
+# 要延迟同步的话,延迟1h
+CHANGE MASTER TO MASTER_HOST='10.0.0.221', MASTER_USER='repluser', MASTER_PASSWORD='123456', MASTER_PORT=3306, MASTER_AUTO_POSITION=1, MASTER_DELAY = 3600; 
+
 # 查看信息
 show slave status\G
 ```
@@ -2223,11 +2233,18 @@ apt install ./mha4mysql* -y
 
 #### manager 管理节点
 
+centos7.9中实验，ubuntu22.04也可实验（但是perl版本有点高，`sprintf` 对参数的数量和占位符的匹配检查更为严格）
+
+*   ubuntu22.04将`/usr/share/perl5/MHA/NodeUtil.pm`中的两处`my $result = sprintf( '%03d%03d', $str =~ m/(\d+)/g );`改为`my $result = sprintf('000000000');`
+*   或自行其他办法解决
+
 下载管理包，之前git链接中，找对应系统的包
 
-```
-wget https://github.com/yoshinorim/mha4mysql-manager/releases/download/v0.58/mha4mysql-manager_0.58-0_all.deb
+```shell
+wget https://github.com/yoshinorim/mha4mysql-node/releases/download/v0.58/mha4mysql-node_0.58-0_all.deb
 
+wget https://github.com/yoshinorim/mha4mysql-manager/releases/download/v0.58/mha4mysql-manager_0.58-0_all.deb
+# 先装node再manager
 apt install ./mha4mysql* -y
 ```
 
@@ -2236,7 +2253,7 @@ apt install ./mha4mysql* -y
 ```shell
 yum install mailx postfix
 apt install bsd-mailx postfix
-
+sprintf( '%03d%03d', $str =~ m/(\d+)/g );
 vim /etc/mail.rc
 set from=xxx@163.com
 set smtp=smtp.163.com
@@ -2452,7 +2469,7 @@ systemctl start mysqld.service
 重启为从节点
 
 ```sql
-CHANGE MASTER TO MASTER_HOST='10.0.0.15', MASTER_USER='repluser', MASTER_PASSWORD='123456', MASTER_PORT=3306, MASTER_AUTO_POSITION=1;
+CHANGE MASTER TO MASTER_HOST='10.0.0.222', MASTER_USER='repluser', MASTER_PASSWORD='123456', MASTER_PORT=3306, MASTER_AUTO_POSITION=1;
 
 start slave;
 
@@ -2482,4 +2499,6 @@ masterha_check_repl --conf=/etc/mastermha/app1.cnf
 
 masterha_manager --conf=/etc/mastermha/app1.cnf --remove_dead_master_conf --ignore_last_failover
 ```
+
+## Galera Cluster（GC）
 
