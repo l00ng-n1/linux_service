@@ -9,13 +9,13 @@
 *   横向扩展：
     *   一 般采用新增节点的方式，增加服务节点的规模来解决性能问题，比如，当一台机器不够用时，可以再增加一台 机器或几台机器来分担流量和业务
 *   纵向扩展：
-    *   一般采 用升级服务器硬件，增加资源供给，修改服务配置项等方式来解决性能问题，比如，将服务器由32G内存升级 成128G内存，将服务最大并发数由128调整到256等。
+    *   一般采 用升级服务器硬件，增加资源供给，修改服务配置项等方式来解决性能问题，比如，将服务器由 32G 内存升级 成 128G 内存，将服务最大并发数由 128 调整到 256 等。
 
 ## MySQL 主从复制
 
 在实际生产环境中，为了解决 MySQL 服务的单点和性能问题，使用 MySQL 主从复制架构是非常常见的一种 方案。
 
-在主从复制架构中，将 MySQL 服务器分为主服务器(Master)和从服务器(Slave)两种角色，主**服务器 负责数据写入(insert，update，delete，create 等)，从服务器负责提供查询服务(select 等)。**
+在主从复制架构中，将 MySQL 服务器分为主服务器(Master)和从服务器(Slave)两种角色，主 **服务器 负责数据写入(insert，update，delete，create 等)，从服务器负责提供查询服务(select 等)。**
 
 MySQL 主从架构属于向外扩展方案，主从节点都有相同的数据集，其基于二进制日志的单向复制来实 现，复制过程是一个异步的过程。
 
@@ -24,7 +24,7 @@ MySQL 主从架构属于向外扩展方案，主从节点都有相同的数据�
 *   负载均衡读操作：将读操作进行分流，由另外一台或多台服务器提供查询服务，降低 MySQL 负载，提升响 应速度
 *   数据库备份：主从节点上都有相同的数据集，从而也实现了数据库的备份
 *   高可用和故障切换：主从架构由两个或多个服务节点构成，在某个节点不可用的情况下，可以进行转移和切 换，保证服务可用
-*    MySQL升级：当 MySQL 服务需要升级时，由于主从架构中有多个节点，可以逐一升级，而不停止服务
+*    MySQL 升级：当 MySQL 服务需要升级时，由于主从架构中有多个节点，可以逐一升级，而不停止服务
 
 **主从复制的缺点**
 
@@ -42,7 +42,7 @@ MySQL 主从架构属于向外扩展方案，主从节点都有相同的数据�
 
 主从同步之前，两者的数据库软件版本、基准数据都是一样的。
 
-在从库上启动复制时，首先创建I/O线程去连接主库，主库随后创建Binlog Dump线程读取数据库特定 事件并发送给I/O线程，I/O线程获取到事件数据后更新到从库的中继日志Relay Log中去，之后从库上的 SQL线程读取中继日志Relay Log中更新的数据库事件并应用
+在从库上启动复制时，首先创建 I/O 线程去连接主库，主库随后创建 Binlog Dump 线程读取数据库特定 事件并发送给 I/O 线程，I/O 线程获取到事件数据后更新到从库的中继日志 Relay Log 中去，之后从库上的 SQL 线程读取中继日志 Relay Log 中更新的数据库事件并应用
 
 三个线程
 
@@ -62,16 +62,16 @@ MySQL 主从架构属于向外扩展方案，主从节点都有相同的数据�
 相关文件
 
 ```shell
-master.info  # 用于保存slave连接至master时的相关信息，例如账号、密码、服务器地址              
+master.info  # 用于保存 slave 连接至 master 时的相关信息，例如账号、密码、服务器地址              
 
-relay-log.info  # 保存在当前slave节点上已经复制的当前二进制日志和本地relay log日志的对应关系         
+relay-log.info  # 保存在当前 slave 节点上已经复制的当前二进制日志和本地 relay log 日志的对应关系         
 
-mysql-relay-bin.00000N # 中继日志,保存从主节点复制过来的二进制日志,本质就是二进制日志     
+mysql-relay-bin.00000N # 中继日志, 保存从主节点复制过来的二进制日志, 本质就是二进制日志     
 
-# MySQL8.0 取消 master.info 和 relay-log.info文件
-# 在MySQL 8.0中，复制配置和状态信息不再直接存储在磁盘上的master.info和relay-log.info文件中。
-# 相反，这些信息被存储在数据字典表（如mysql.slave_master_info和mysql.slave_relay_log_info）中。
-# 这些表提供了与旧文件相同的信息，但具有更好的性能和可靠性，因为它们是由MySQL服务器直接管理的。
+# MySQL8.0 取消 master.info 和 relay-log.info 文件
+# 在 MySQL 8.0 中，复制配置和状态信息不再直接存储在磁盘上的 master.info 和 relay-log.info 文件中。
+# 相反，这些信息被存储在数据字典表（如 mysql.slave_master_info 和 mysql.slave_relay_log_info）中。
+# 这些表提供了与旧文件相同的信息，但具有更好的性能和可靠性，因为它们是由 MySQL 服务器直接管理的。
 ```
 
 ![image-20250107193127311](pic/image-20250107193127311.png)
@@ -80,7 +80,7 @@ mysql-relay-bin.00000N # 中继日志,保存从主节点复制过来的二进制
     *   为每一个 Slave 节点上的 I/O thread 启动一个 dump thread，用来向其提供本机 的二进制事件
 *   Slave 节点
     *   I/O thread 线程向 Master 节点请求该节点上的二进制事件，并将得到的内容写到当前 节点上的 replay log 中
-    *   SQL thread 实时监测 replay log 内容是否有更新，如果更新，则将该文件中的内容 解析成SQL语句，还原到 Slave 节点上的数据库中去，这样来保证主从节点之间的数据同步。
+    *   SQL thread 实时监测 replay log 内容是否有更新，如果更新，则将该文件中的内容 解析成 SQL 语句，还原到 Slave 节点上的数据库中去，这样来保证主从节点之间的数据同步。
 
 ## 主从复制配置
 
@@ -145,9 +145,9 @@ relay_log_index=relay-log.index
 **使用有复制权限的用户账号连接至主服务器，并启动复制线程**
 
 ```sql
--- 在从节点上执行下列SQL语句，提供主节点地址和连接账号，用户名，密码，开始同步的二进制文件和位置等
+-- 在从节点上执行下列 SQL 语句，提供主节点地址和连接账号，用户名，密码，开始同步的二进制文件和位置等
 
-CHANGE MASTER TO MASTER_HOST='10.0.0.152',  -- 指定master节点
+CHANGE MASTER TO MASTER_HOST='10.0.0.152',  -- 指定 master 节点
 MASTER_USER='repluser',                     -- 连接用户
 MASTER_PASSWORD='123456',                 -- 连接密码
 MASTER_LOG_FILE='mysql-bin.000001',         -- 从哪个二进制文件开始复制
@@ -159,14 +159,14 @@ STOP SLAVE                                  -- 停止同步
 RESET SALVE ALL                             -- 清除同步信息
 
 SHOW SLAVE STATUS;                          -- 查看从节点状态
-SHOW RELAYLOG EVENTS in 'relay-bin.0000x'   -- 查看relaylog事件
+SHOW RELAYLOG EVENTS in 'relay-bin.0000x'   -- 查看 relaylog 事件
 
--- 可以利用MASTER_DELAY参数设置从节点延迟同步，作用主从备份，比如设置1小时延时，则主节点上的误操作，要一个小时后才会同步到从服务器，可以利用时间差保存从节点数据
+-- 可以利用 MASTER_DELAY 参数设置从节点延迟同步，作用主从备份，比如设置 1 小时延时，则主节点上的误操作，要一个小时后才会同步到从服务器，可以利用时间差保存从节点数据
 ```
 
 ## 一主一从
 
-主掉线，从会每隔60s进行重新连接
+主掉线，从会每隔 60s 进行重新连接
 
 ![image-20250108105158238](pic/image-20250108105158238.png)
 
@@ -179,7 +179,7 @@ mkdir -pv /data/mysql/logbin
 chown -R mysql:mysql /data/mysql/
 ```
 
-更改apparmor使其mysql能够有读取指定路径的权限（ubuntu中）
+更改 apparmor 使其 mysql 能够有读取指定路径的权限（ubuntu 中）
 
 ```shell
 vim /etc/apparmor.d/usr.sbin.mysqld
@@ -187,11 +187,11 @@ vim /etc/apparmor.d/usr.sbin.mysqld
 /data/mysql/** rw,
 /data/mysql rw,
 
-# 重新加载apparmor
+# 重新加载 apparmor
 apparmor_parser -r /etc/apparmor.d/usr.sbin.mysqld
 ```
 
-主节点mysql配置
+主节点 mysql 配置
 
 ```ini
 vim /etc/mysql/mysql.conf.d/mysqld.cnf 
@@ -252,7 +252,7 @@ mkdir -pv /data/mysql/logbin
 chown -R mysql:mysql /data/mysql/
 ```
 
-更改apparmor使其mysql能够有读取指定路径的权限（ubuntu中）
+更改 apparmor 使其 mysql 能够有读取指定路径的权限（ubuntu 中）
 
 ```shell
 vim /etc/apparmor.d/usr.sbin.mysqld
@@ -260,11 +260,11 @@ vim /etc/apparmor.d/usr.sbin.mysqld
 /data/mysql/** rw,
 /data/mysql rw,
 
-# 重新加载apparmor
+# 重新加载 apparmor
 apparmor_parser -r /etc/apparmor.d/usr.sbin.mysqld
 ```
 
-从节点mysql配置
+从节点 mysql 配置
 
 ```ini
 vim /etc/mysql/mysql.conf.d/mysqld.cnf 
@@ -281,7 +281,7 @@ default_authentication_plugin=mysql_native_password
 systemctl restart mysql.service
 ```
 
-配置主从同步（mysql中）
+配置主从同步（mysql 中）
 
 ```sql
 CHANGE MASTER TO MASTER_HOST='10.0.0.12', MASTER_USER='repluser', MASTER_PASSWORD='123456', MASTER_PORT=3306, MASTER_LOG_FILE='mysql-bin.000001',MASTER_LOG_POS=849;
@@ -307,17 +307,17 @@ show processlist;
 ```sql
 # Error connecting to source 'repluser@10.0.0.12:3306'. This was attempt 1/86400, with a delay of 60 seconds between attempts. Message: Authentication plugin 'caching_sha2_password' reported error: Authentication requires secure connection.
 
--- 解决方案1：主节点改密码插件
+-- 解决方案 1：主节点改密码插件
 ALTER USER 'repluser'@'10.0.0.%' IDENTIFIED WITH 'mysql_native_password' BY '123456';
 
--- 解决方案2：(生产中推荐，测试环境不推荐)
+-- 解决方案 2：(生产中推荐，测试环境不推荐)
 # 在服务器端，确保已启用 TLS/SSL。检查 MySQL 配置文件（my.cnf 或 my.ini）中的以下参数是否配置正确
 [mysqld]
 ssl-ca=/path/to/ca.pem
 ssl-cert=/path/to/server-cert.pem
 ssl-key=/path/to/server-key.pem
-# 在客户端，使用 --ssl-mode=REQUIRED 强制客户端使用 TLS/SSL 连接
-mysqlbinlog -R --host=10.0.0.121 --ssl-mode=REQUIRED --raw --stop-never --user=root --password=123456 ubuntu.000011
+# 在客户端，使用 --ssl-mode = REQUIRED 强制客户端使用 TLS/SSL 连接
+mysqlbinlog -R --host = 10.0.0.121 --ssl-mode = REQUIRED --raw --stop-never --user = root --password = 123456 ubuntu.000011
 ```
 
 ### 一主一从（主存在过往数据）
@@ -350,8 +350,8 @@ mysqldump -A -F --source-data=1 --single-transaction > all.sql
 #### 从
 
 ```shell
-# 将all.sql文件中的下面的语句补齐
-# CHANGE MASTER TO MASTER_LOG_FILE='mysql-bin.000002', MASTER_LOG_POS=157;
+将 all.sql 文件中的下面的语句补齐
+# CHANGE MASTER TO MASTER_LOG_FILE ='mysql-bin.000002', MASTER_LOG_POS = 157;
 vim all.sql
 CHANGE MASTER TO MASTER_LOG_FILE='mysql-bin.000002', MASTER_LOG_POS=157,MASTER_HOST='10.0.0.12',MASTER_USER='repluser', MASTER_PASSWORD='123456',MASTER_PORT=3306;
 
@@ -365,7 +365,7 @@ mysql < all.sql
 
 注意有没有过往数据要导入
 
-多从就是从多配置一遍，注意server-id要不同
+多从就是从多配置一遍，注意 server-id 要不同
 
 ![image-20250108105209351](pic/image-20250108105209351.png)
 
@@ -377,7 +377,7 @@ mysql < all.sql
 
 在级联同步架构中，有一个中间节点的角色，该节点从主节点中同步数据，并充当其它节点的数据 源，所以在此情况下，我们需要保证中间节点从主节点中同步过来的数据，同样也要写二进制日志，否则后续 节点无法获取数据。
 
-在此架构中，中间节点要开启log_slave_updates选项，保证中间节点复制过来的数据也能写入二进制日志，为其它节点提供数据源
+在此架构中，中间节点要开启 log_slave_updates 选项，保证中间节点复制过来的数据也能写入二进制日志，为其它节点提供数据源
 
 ### 主节点
 
@@ -408,7 +408,7 @@ log_slave_updates
 导入主库数据
 
 ```shell
-# 修改sql文件中的 CHANGE MASTER
+修改 sql 文件中的 CHANGE MASTER
 vim 
 CHANGE MASTER TO MASTER_LOG_FILE='mysql-bin.000002', MASTER_LOG_POS=157,MASTER_HOST='10.0.0.12',MASTER_USER='repluser', MASTER_PASSWORD='123456',MASTER_PORT=3306;
 
@@ -434,7 +434,7 @@ mysqldump -A -F --source-data=1 --single-transaction > all.sql
 导入中间库数据
 
 ```shell
-# 修改sql文件中的 CHANGE MASTER
+修改 sql 文件中的 CHANGE MASTER
 vim 
 CHANGE MASTER TO MASTER_LOG_FILE='mysql-bin.000003', MASTER_LOG_POS=157,MASTER_HOST='10.0.0.204',MASTER_USER='repluser', MASTER_PASSWORD='123456',MASTER_PORT=3306;
 
@@ -551,7 +551,7 @@ start slave;
 
 **双主架构在实际生产环境中，并不会配置为两个节点都去写数据**
 
-双主架构在实际生产环境中，并不会配置为两个节点都去写数据，前端应用只会写一个节点，另一个节点 作为备份节点，如果当前使用的节点出问题，则IP地址会立即转移到另一个节点上，起到一个高可用的作用， 此时，如果有slave节点，在 slave 上要重新执行同步操作。
+双主架构在实际生产环境中，并不会配置为两个节点都去写数据，前端应用只会写一个节点，另一个节点 作为备份节点，如果当前使用的节点出问题，则 IP 地址会立即转移到另一个节点上，起到一个高可用的作用， 此时，如果有 slave 节点，在 slave 上要重新执行同步操作。
 
 ![image-20250108164058776](pic/image-20250108164058776.png)
 
@@ -585,23 +585,23 @@ slave_skip_errors=N|ALL
 
 ##  半同步复制
 
-应用程序或客户端向主节点写入数据，主节点给客户端返回写入成功或失败状态，从节点同步数据，这几个事情的步骤和执行顺序不一样，意味着不同的同步策略，从而对MySQL的性能和数据安全性有着不同的影响
+应用程序或客户端向主节点写入数据，主节点给客户端返回写入成功或失败状态，从节点同步数据，这几个事情的步骤和执行顺序不一样，意味着不同的同步策略，从而对 MySQL 的性能和数据安全性有着不同的影响
 
 *   异步复制
-    *   当客户端程序向主节点中写入数据后，主节点中数据落盘， 写入binlog日志，然后将binlog日志中的新事件发送给从节点 ，便向客户端返回写入成功，而并不验证 从节点是否接收完毕，也不等待从节点返回同步状态
+    *   当客户端程序向主节点中写入数据后，主节点中数据落盘， 写入 binlog 日志，然后将 binlog 日志中的新事件发送给从节点 ，便向客户端返回写入成功，而并不验证 从节点是否接收完毕，也不等待从节点返回同步状态
     *   客户端只能确认向主节点的写入是成功 的，并不能保证刚写入的数据成功同步到了从节点。
     *   异步复制不要求数据能成功同步到从节点，只要主节点完成写操作，便立即向客户端返回结果。
     *   如果主从同步出现故障，则有可能出现主从节点之间数据不一致的问题
     *   如果 在主节点写入数据后没有完成同步，主节点服务当机，则会造成数据丢失。
 *   同步复制
-    *   当客户端程序向主节点中写入数据后，主节点中数据落盘，写入binlog日志，然后将binlog日志中的新 事件发送给从节点 ，等待所有从节点向主节点返回同步成功之后，主节点才会向客户端返回写入成功。
+    *   当客户端程序向主节点中写入数据后，主节点中数据落盘，写入 binlog 日志，然后将 binlog 日志中的新 事件发送给从节点 ，等待所有从节点向主节点返回同步成功之后，主节点才会向客户端返回写入成功。
     *   最大限度的保证数据安全和主从节点之间的数据一致性
     *   性能不高
 *   半同步复制
-    *   当客户端程序向主节点中写入数据后，主节点中数据落盘，写入binlog日志，然后将binlog日志中的新 事件发送给从节点 ，等待所有从节点中有一个从节点返回同步成功之后，主节点就向客户端返回写入成 功。
+    *   当客户端程序向主节点中写入数据后，主节点中数据落盘，写入 binlog 日志，然后将 binlog 日志中的新 事件发送给从节点 ，等待所有从节点中有一个从节点返回同步成功之后，主节点就向客户端返回写入成 功。
     *   至少有一个从节点中有同步到数据，也能尽早的向客户端返回写入状态。
     *   但此复制策略并不能百分百保证数据有成功的同步至从节点，可以在此策略下设至同步超时时间， 如果超过等待时间，即使没有任何一个从节点返回同步成功的状态，主节点也会向客户端返回写入成 功。
-    *   如果生产业务比较关 注主从最终一致(比如:金融等)。推荐可以使用MGR的架构，或者PXC等一致性架构。
+    *   如果生产业务比较关 注主从最终一致(比如: 金融等)。推荐可以使用 MGR 的架构，或者 PXC 等一致性架构。
 
 ### 半同步策略
 
@@ -616,7 +616,7 @@ rpl_semi_sync_master_wait_point=after_commit
 在此半同步策略配置中，可能会出现下列问题：
 
 *   幻读：当客户端提交一个事务，该事务己经写入 redo log 和 binlog，但该事务还没有写入从节 点，此时处在 Waiting Slave dump 处，此时另一个用户可以读取到这条数据，而他自己却不能。
-*   数据丢失：一个提交的事务在 Waiting Slave dump 处 crash后，主库将比从库多一条数据
+*   数据丢失：一个提交的事务在 Waiting Slave dump 处 crash 后，主库将比从库多一条数据
 
 #### mysql8.0
 
@@ -626,7 +626,7 @@ rpl_semi_sync_master_wait_point=after_sync
 
 ![image-20250108191919127](pic/image-20250108191919127.png)
 
-在mysql8.0之后的半同步策略配置中，客户端的写操作先不提交事务，而是先写二进制日志，然后向从库同步数据，由于在主节点上的事务还没提交，所以此时其他进程查不到当前的写操作，不会出现幻读的问题，而且主节点要确认至少一个从节点的数据同步成功了，再会提交事务，这样也保证了主从之间的数据一致性，不会存在丢失的情况 
+在 mysql8.0 之后的半同步策略配置中，客户端的写操作先不提交事务，而是先写二进制日志，然后向从库同步数据，由于在主节点上的事务还没提交，所以此时其他进程查不到当前的写操作，不会出现幻读的问题，而且主节点要确认至少一个从节点的数据同步成功了，再会提交事务，这样也保证了主从之间的数据一致性，不会存在丢失的情况 
 
 总结就是：先写二进制日志，确定从节点同步后，再提交事务落盘，从而确保主库落盘的数据是从库同步成功的。防止主从不一致
 
@@ -685,7 +685,7 @@ rpl_semi_sync_slave_enabled
 复制过滤器的实现有两种方式：
 
 *   在 master 节点上使用服务器选项配置来实现：在 master 节点上配置仅向二进制日志中写入与特定数据库相关的事件。
-    *   优点：只需要在 master 节点上配置一次即可，不需要在 salve 节点上操作；减小了二进制日志中的数 据量，能减少磁盘IO和网络IO。
+    *   优点：只需要在 master 节点上配置一次即可，不需要在 salve 节点上操作；减小了二进制日志中的数 据量，能减少磁盘 IO 和网络 IO。
     *   缺点：二进制日志中记录的数据不完整，如果当前节点出现故障，将无法使用二进制还原。
 *   在 slave 节点上使用服务器选项或者是全局变量配置来实现：在 slave 节点上配置在读取 relay log  时仅处理指定的数据库或表。
 
@@ -693,7 +693,7 @@ rpl_semi_sync_slave_enabled
 
 
 
-### 方案1：主节点配置
+### 方案 1：主节点配置
 
 相关配置项
 
@@ -735,7 +735,7 @@ show master status;
 
 如果复制过滤规则仅允许某些表被复制，而 SQL 查询涉及多个被排除的表，则复制的 SQL 语句在从库上无法正确执行。
 
-### 方案1：从节点配置
+### 方案 1：从节点配置
 
 ```ini
 [mysqld]
@@ -756,14 +756,14 @@ replicate-wild-ignore-table=foo%.bar% # 指定复制表的黑名单，支持通�
 show master status;
 ```
 
-## GTID复制（高并发场景）
+## GTID 复制（高并发场景）
 
-GTID（global transaction ID）：全局事务ID
+GTID（global transaction ID）：全局事务 ID
 
-二进制日志中默认GTID是匿名
+二进制日志中默认 GTID 是匿名
 
 ```shell
-# 所有事务的操作都是都是ANONYMOUS，没有标识。这就意味着，当事务量多的时候，只能按照顺序进行处理
+所有事务的操作都是都是 ANONYMOUS，没有标识。这就意味着，当事务量多的时候，只能按照顺序进行处理
 SET @@SESSION.GTID_NEXT= 'ANONYMOUS'/*!*/; 
 ```
 
@@ -773,7 +773,7 @@ GTID 是一个己提交的事务的编号，由当前 MySQL 节点的 server-uui
 
 **同时 GTID 具有幂等性特性，即多次执行结果是一样的。**
 
-利用 GTID 复制不像传统的复制方式（异步复制、半同步复制）需要找到 binlog 文件名和 POS  点，只需知道 master 节点的 IP、端口、账号、密码即可。开启 GTID 后，执行 change master to  master_auto_postion=1 即可，它会自动寻找到相应的位置开始同步。
+利用 GTID 复制不像传统的复制方式（异步复制、半同步复制）需要找到 binlog 文件名和 POS  点，只需知道 master 节点的 IP、端口、账号、密码即可。开启 GTID 后，执行 change master to  master_auto_postion = 1 即可，它会自动寻找到相应的位置开始同步。
 
 
 
@@ -784,19 +784,19 @@ GTID 是一个己提交的事务的编号，由当前 MySQL 节点的 server-uui
 
 
 
-GTID优点
+GTID 优点
 
-- GTID使用了master_auto_position=1替代了基于binlog和position号的主从复制方式，更便于主从复制的搭建
-- GTID可以知道事务在最开始是在哪个实例上提交的，保证事务全局统一
+- GTID 使用了 master_auto_position = 1 替代了基于 binlog 和 position 号的主从复制方式，更便于主从复制的搭建
+- GTID 可以知道事务在最开始是在哪个实例上提交的，保证事务全局统一
 - 截取日志更方便，跨多文件，判断起点终点更方便
-- 传输日志，可以并发传送，SQL回放可以跟高并发
+- 传输日志，可以并发传送，SQL 回放可以跟高并发
 - 判断主从工作状态更加方便
 
 
 
-**总结：GTID的作用：在高并发条件下，保证事务的顺序**
+**总结：GTID 的作用：在高并发条件下，保证事务的顺序**
 
-### 查看当前节点的server-uuid
+### 查看当前节点的 server-uuid
 
 ```shell
 mysql> show global variables like '%server_uuid%';
@@ -807,14 +807,14 @@ mysql> show global variables like '%server_uuid%';
 +---------------+--------------------------------------+
 1 row in set (0.00 sec)
 
-# 此文件在MySQL5.7开始才有
+# 此文件在 MySQL5.7 开始才有
 cat /var/lib/mysql/auto.cnf
 [root@ubuntu2204 ~]#cat /var/lib/mysql/auto.cnf 
 [auto]
 server-uuid=d5cdb5a0-26df-11ef-badc-000c29bb0db4
 ```
 
-在主从架构中，主从节点可以互相获取对方节点的server-id
+在主从架构中，主从节点可以互相获取对方节点的 server-id
 
 ```sql
 mysql> show slave hosts;
@@ -837,7 +837,7 @@ Master_Info_File: mysql.slave_master_info.
 
 ### 配置
 
-在master与slave都添加GTID选项
+在 master 与 slave 都添加 GTID 选项
 
 ```ini
 [mysqld]
@@ -891,7 +891,7 @@ Seconds_Behind_Master：0  # 表示未落后
 
 ### 如何确定主从节点的数据是否一致
 
-使用第三方工具percona-toolkit
+使用第三方工具 percona-toolkit
 
 ```shell
  https://www.percona.com/software/database-tools/percona-toolkit
@@ -906,11 +906,11 @@ Seconds_Behind_Master：0  # 表示未落后
 *   主库 binlog 格式为 Statement，同步到从库执行后可能造成主从不一致。
     *   binlog 格式：raw
 *   部分操作未记入二进制日志
-    *   主库执行更改前有执行set sql_log_bin=0，会使主库不记录 binlog，从库也无法变更这部分数据。
+    *   主库执行更改前有执行 set sql_log_bin = 0，会使主库不记录 binlog，从库也无法变更这部分数据。
 *   从节点未设置只读，误操作写入数据
 *   主库或从库意外宕机，宕机可能会造成 binlog 或者 relaylog 文件出现损坏，导致主从不一致
 *   主从数据库的版本不一致，特别是高版本是主，低版本为从的情况下，主数据库上面支持的功能，从数据库上面 可能不支持该功能
-*   主从 sql_mode 不一致,也就是说，两方对于数据库执行的检查标准不一样
+*   主从 sql_mode 不一致, 也就是说，两方对于数据库执行的检查标准不一样
 *   MySQL 自身 bug 导致
 
 
@@ -945,10 +945,10 @@ Seconds_Behind_Master：0  # 表示未落后
 
 ### 主从复制出现延迟
 
-*   升级到 MySQL5.7 以上版本,利用 GTID支持并发传输 binlog 及并 行多个 SQL 线程
+*   升级到 MySQL5.7 以上版本, 利用 GTID 支持并发传输 binlog 及并 行多个 SQL 线程
 *   减少大事务，将大事务拆分成小事务
 *   减少锁
-*   sync_binlog=1 (实时写入磁盘)加快 binlog 更新时间，从而加快日志复制
+*   sync_binlog = 1 (实时写入磁盘)加快 binlog 更新时间，从而加快日志复制
 *   需要额外的监控工具的辅助
 *   多线程复制：对多个数据库复制
 *   一从多主：Mariadb10 版后支持
@@ -965,7 +965,7 @@ Seconds_Behind_Master：0  # 表示未落后
 stop slave;
 ```
 
-**master 节点导出 A,B,C的备份**
+**master 节点导出 A, B, C 的备份**
 
 ```shell
 mysqldump -uroot -pmagedu -q --single-transaction --master-data=2 testdb A B C >/backup/A_B_C.sql
@@ -1021,13 +1021,13 @@ START SLAVE;
 
 *   主库 binlog 采用 ROW 格式 
 *   主从实例数据库版本保持一致 
-*   主库做好账号权限把控，不可以执行 set sql_log_bin=0 
+*   主库做好账号权限把控，不可以执行 set sql_log_bin = 0 
 *   从库开启只读，不允许人为写入 
 *   定期进行主从一致性检验
 
 
 
-# MySQL中间件代理服务器
+# MySQL 中间件代理服务器
 
 ## 关系型数据库和 NoSQL 数据库
 
@@ -1174,7 +1174,7 @@ NoSQL 数据库，全称为 Not Only SQL，意思就是适用关系型数据库�
 
 可能 90%以上的人在面对上面这两种解决思路的时候都会倾向于选择第二种，尤其是系统不断变得庞大 复杂 的时候。确实，这是一个非常正确的选择，虽然短期内需要付出的成本可能会相对更大一些，但是对整个 系统的 扩展性来说，是非常有帮助的。
 
-MySQL中间件服务器可以通过将数据切分解决传统数据库的缺陷，又有了 NoSQL 易于扩展的优点。通过 中间代理层规避了多数据源的处理问题，对应用完全透明，同时对数据切分后存在的问题，也做了解决方案。
+MySQL 中间件服务器可以通过将数据切分解决传统数据库的缺陷，又有了 NoSQL 易于扩展的优点。通过 中间代理层规避了多数据源的处理问题，对应用完全透明，同时对数据切分后存在的问题，也做了解决方案。
 
 
 
@@ -1196,31 +1196,31 @@ MySQL中间件服务器可以通过将数据切分解决传统数据库的缺陷
 
 
 
-## MyCat实现 MySQL 读写分离
+## MyCat 实现 MySQL 读写分离
 
 ### 简介
 
-[| MYCAT官方网站—中国第一开源分布式数据库中间件](http://www.mycat.org.cn/)
+[| MYCAT 官方网站—中国第一开源分布式数据库中间件](http://www.mycat.org.cn/)
 
- Mycat 是一个开源的分布式数据库系统，是一个实现了 MySQL 协议的服务器，前端用户可以把它看作 是一个数据库代理（类似于Mysql Proxy），用 MySQL 客户端工具和命令行访问，而其后端可以用 MySQL  原生协议与多个 MySQL 服务器通信，也可以用 JDBC 协议与大多数主流数据库服务器通信，其核心功能是 **分表分库**，即将一个大表水平分割为 N 个小表，存储在后端 MySQL 服务器里或者其他数据库里。
+ Mycat 是一个开源的分布式数据库系统，是一个实现了 MySQL 协议的服务器，前端用户可以把它看作 是一个数据库代理（类似于 Mysql Proxy），用 MySQL 客户端工具和命令行访问，而其后端可以用 MySQL  原生协议与多个 MySQL 服务器通信，也可以用 JDBC 协议与大多数主流数据库服务器通信，其核心功能是 **分表分库**，即将一个大表水平分割为 N 个小表，存储在后端 MySQL 服务器里或者其他数据库里。
 
 ![image-20250109105130244](pic/image-20250109105130244.png)
 
 ![image-20250109105253069](pic/image-20250109105253069.png)
 
-MyCat 的高可用,可以使用的高可用集群方式有:
+MyCat 的高可用, 可以使用的高可用集群方式有:
 
 -   Keepalived+Mycat+Mysql
 -   Keepalived+LVS+Mycat+Mysql
 -   Keepalived+Haproxy+Mycat+Mysql
 
-需要注意: 在生产环境中, Mycat 节点最好使用双节点, 即双机热备环境, 防止Mycat这一层出现单点故 障
+需要注意: 在生产环境中, Mycat 节点最好使用双节点, 即双机热备环境, 防止 Mycat 这一层出现单点故 障
 
-### 安装mycat
+### 安装 mycat
 
 #### 安装-启动
 
-不要安装过高版本的java版本，openjdk17启动失败，11可以
+不要安装过高版本的 java 版本，openjdk17 启动失败，11 可以
 
 [MyCATApache/Mycat-Server](https://github.com/MyCATApache/Mycat-Server)
 
@@ -1234,34 +1234,34 @@ tar xf Mycat-server-1.6.7.6-release-20220524173810-linux.tar.gz -C ./
 目录结构
 
 ```shell
-bin           # mycat命令，启动，重启，停止等
+bin           # mycat 命令，启动，重启，停止等
 catlet        # 扩展功能目录，默认为空
 conf          # 配置文件目录
-lib           # 引用的jar包
+lib           # 引用的 jar 包
 logs          # 日志目录，默认为空
 version.txt   # 版本说明文件
 
 # 日志
-logs/wrapper.log   # Mycat启动日志
-logs/mycat.log     # Mycat详细工作日志
+logs/wrapper.log   # Mycat 启动日志
+logs/mycat.log     # Mycat 详细工作日志
 
 # 常用配置文件
-conf/server.xml    # Mycat软件本身相关的配置文件，设置账号，参数等
+conf/server.xml    # Mycat 软件本身相关的配置文件，设置账号，参数等
 conf/schema.xml    # 对应的物理数据库和数据库表的配置，读写分离，高可用，分布式策略定制，节点控制
-conf/rule.xml      # Mycat分片（分库分表）规则配置文件，记录分片规则列表，使用方法等。
+conf/rule.xml      # Mycat 分片（分库分表）规则配置文件，记录分片规则列表，使用方法等。
 ```
 
-写PATH
+写 PATH
 
 ```shell
-# 写PATH
+写 PATH
 vim /etc/profile.d/mycat.sh
 PATH=/root/mycat/bin:$PATH
 
 source /etc/profile.d/mycat.sh
 ```
 
-查看mycat的默认配置,其中有登录的账户与密码
+查看 mycat 的默认配置, 其中有登录的账户与密码
 
 ```shell
 vim ./mycat/conf/server.xml
@@ -1270,67 +1270,67 @@ vim ./mycat/conf/server.xml
 启动
 
 ```shell
-# 启动
+启动
 mycat start
 
-# 需要提前安装mysql的客户端工具
+# 需要提前安装 mysql 的客户端工具
 apt install mysql -y
 
-# 连接mycat
+# 连接 mycat
 mysql -uroot -p123456 -h 127.0.0.1 -P8066
 ```
 
-#### server.xml配置
+#### server.xml 配置
 
 配置文件说明
 
 ```shell
-server.xml  # 存放mycat软件本身相关配置的文件，比如，链接mycat的用户，密码，数据库名等
+server.xml  # 存放 mycat 软件本身相关配置的文件，比如，链接 mycat 的用户，密码，数据库名等
 
 # 相关配置
 user        # 用户配置节点
-name        # 客户端登录mycat的用户名
-password    # 客户端登录mycat的密码
-schema      # 数据库名，这里会和schema.xml中的相关配置关联，多个用逗号分开
+name        # 客户端登录 mycat 的用户名
+password    # 客户端登录 mycat 的密码
+schema      # 数据库名，这里会和 schema.xml 中的相关配置关联，多个用逗号分开
 privileges  # 配置用户针对表的增删改查的权限
-readOnly    # mycat逻辑库所具有的权限，true为只读，false为读写都有，默认false
+readOnly    # mycat 逻辑库所具有的权限，true 为只读，false 为读写都有，默认 false
 ```
 
-- server.xml文件里登录mycat的用户名和密码可以任意定义，这个账号和密码是为客户机登录mycat时使用的账号信息
-- 逻辑库名(如上面的TESTDB，也就是登录mycat后显示的库名，切换这个库后，显示的就是代理的真实mysql数据库的表)要在`schema.xml`里面也定义，否则会导致mycat服务启动失败
-- 这里只定义了一个标签，所以把多余的注释了，如果定义多个标签，即设置多个连接mycat的用户和密码，那么就需要在schema.xml文件中定义多个对应的库
+- server.xml 文件里登录 mycat 的用户名和密码可以任意定义，这个账号和密码是为客户机登录 mycat 时使用的账号信息
+- 逻辑库名(如上面的 TESTDB，也就是登录 mycat 后显示的库名，切换这个库后，显示的就是代理的真实 mysql 数据库的表)要在 `schema.xml` 里面也定义，否则会导致 mycat 服务启动失败
+- 这里只定义了一个标签，所以把多余的注释了，如果定义多个标签，即设置多个连接 mycat 的用户和密码，那么就需要在 schema.xml 文件中定义多个对应的库
 
-#### schema.xml配置
+#### schema.xml 配置
 
-schema.xml是最主要的配置项，此文件关联mysql读写分离策略，读写分离、分库分表策略、分片节 点都是在此文件中配置的。
+schema.xml 是最主要的配置项，此文件关联 mysql 读写分离策略，读写分离、分库分表策略、分片节 点都是在此文件中配置的。
 
-MyCat作为中间件，它只是一个代理，本身并不进行数据存储，需要连接后 端的MySQL物理服务器，此文件就是用来连接 MySQL 服务器的
+MyCat 作为中间件，它只是一个代理，本身并不进行数据存储，需要连接后 端的 MySQL 物理服务器，此文件就是用来连接 MySQL 服务器的
 
 ```shell
-schema           # 数据库设置，此数据库为逻辑数据库，name与server.xml中schema对应
+schema           # 数据库设置，此数据库为逻辑数据库，name 与 server.xml 中 schema 对应
 dataNode         # 分片信息，也就是分库相关配置
 dataHost         # 物理数据库，真正存储数据的数据库
 
 # 每个节点的属性逐一说明
 schema
-    name            # 逻辑数据库名，与server.xml中的schema对应
-    checkSQL_schema # 数据库前缀相关的设置，这里为false
-    sqlMax.limit    # select时默认的limit，避免查询全表
+    name            # 逻辑数据库名，与 server.xml 中的 schema 对应
+    checkSQL_schema # 数据库前缀相关的设置，这里为 false
+    sqlMax.limit    # select 时默认的 limit，避免查询全表
 
 table
     name            # 表名，物理数据库中表名
-    dataNode        # 表存储到哪些节点，多个节点用逗号分隔，节点为下文dataNode设置的name
+    dataNode        # 表存储到哪些节点，多个节点用逗号分隔，节点为下文 dataNode 设置的 name
     primaryKey      # 主键字段名，自动生成主键时需要设置
     autoIncrement   # 是否自增
-    rule            # 分片规则名，具体规则下文rule详细介绍
+    rule            # 分片规则名，具体规则下文 rule 详细介绍
   
 dataNode
-    name            # 节点名，与table中dataNode对应
-    datahost        # 物理数据库名，与datahost中name对应
+    name            # 节点名，与 table 中 dataNode 对应
+    datahost        # 物理数据库名，与 datahost 中 name 对应
     database        # 物理数据库中的数据库名
 
 dataHost
-    name            # 物理数据库名，与dataNode中dataHost对应
+    name            # 物理数据库名，与 dataNode 中 dataHost 对应
     balance         # 均衡负载的方式
     writeType       # 写入方式
     dbType          # 数据库类型
@@ -1343,7 +1343,7 @@ dataHost
 
 正常配置主从
 
-主库中添加mycat用户
+主库中添加 mycat 用户
 
 ```sql
 create user 'mycater'@'10.0.0.%' identified by '123456';
@@ -1353,7 +1353,7 @@ grant all on *.* to 'mycater'@'10.0.0.%';
 flush privileges;
 ```
 
-Mycat服务器配置
+Mycat 服务器配置
 
 server.xml
 
@@ -1398,18 +1398,18 @@ schema.xml
 </mycat:schema>
 ```
 
-## ProxySQL实现MySQL读写分离
+## ProxySQL 实现 MySQL 读写分离
 
 ### 介绍
 
-两个版本：官方版和 percona版，percona 版是基于官方版基础上修改 
+两个版本：官方版和 percona 版，percona 版是基于官方版基础上修改 
 
 C++语言开发，轻量级但性能优异，支持处理千亿级数据
 
 
 
 *   多种方式的读/写分离
-*   定制基于用户、基于schema、基于语句的规则对SQL语句进行路由
+*   定制基于用户、基于 schema、基于语句的规则对 SQL 语句进行路由
 *   缓存查询结果
 *   后端节点监控
 
@@ -1463,10 +1463,10 @@ mysql -uadmin -padmin -P6032 -h127.0.0.1
 /var/lib/proxysql/       # 基于SQLITE的数据库文件，存放配置
 ```
 
-### proxySQL配置文件
+### proxySQL 配置文件
 
 ```shell
-# rpm -ql proxysql
+rpm -ql proxysql
 /etc/proxsql.cnf
 
  数据库目录
@@ -1477,12 +1477,12 @@ errorlog="/var/lib/proxysql/proxysql.log"
 admin_variables=
 {
         admin_credentials="admin:admin"
-#       mysql_ifaces="127.0.0.1:6032;/tmp/proxysql_admin.sock"
+#       mysql_ifaces = "127.0.0.1:6032;/tmp/proxysql_admin.sock"
         mysql_ifaces="0.0.0.0:6032"
-#       refresh_interval=2000
-#       debug=true
+#       refresh_interval = 2000
+#       debug = true
 }
-# 和mysql相关的
+# 和 mysql 相关的
 mysql_variables=
 {
         threads=4
@@ -1491,7 +1491,7 @@ mysql_variables=
         default_query_timeout=36000000
         have_compress=true
         poll_timeout=2000
-#       interfaces="0.0.0.0:6033;/tmp/proxysql.sock"
+#       interfaces = "0.0.0.0:6033;/tmp/proxysql.sock"
         interfaces="0.0.0.0:6033"
         default_schema="information_schema"
         stacksize=1048576
@@ -1532,18 +1532,18 @@ mysql_servers =
 #               hostgroup = 0
 #       },
 #       {
-#               address="127.0.0.1"
-#               port=21891
-#               hostgroup=0
-#               max_connections=200
+#               address = "127.0.0.1"
+#               port = 21891
+#               hostgroup = 0
+#               max_connections = 200
 #       },
-#       { address="127.0.0.2" , port=3306 , hostgroup=0, max_connections=5 },
-#       { address="127.0.0.1" , port=21892 , hostgroup=1 },
-#       { address="127.0.0.1" , port=21893 , hostgroup=1 }
-#       { address="127.0.0.2" , port=3306 , hostgroup=1 },
-#       { address="127.0.0.3" , port=3306 , hostgroup=1 },
-#       { address="127.0.0.4" , port=3306 , hostgroup=1 },
-#       { address="/var/lib/mysql/mysql.sock" , port=0 , hostgroup=1 }
+#       { address = "127.0.0.2" , port = 3306 , hostgroup = 0, max_connections = 5 },
+#       { address = "127.0.0.1" , port = 21892 , hostgroup = 1 },
+#       { address = "127.0.0.1" , port = 21893 , hostgroup = 1 }
+#       { address = "127.0.0.2" , port = 3306 , hostgroup = 1 },
+#       { address = "127.0.0.3" , port = 3306 , hostgroup = 1 },
+#       { address = "127.0.0.4" , port = 3306 , hostgroup = 1 },
+#       { address = "/var/lib/mysql/mysql.sock" , port = 0 , hostgroup = 1 }
 )
 
 # 和数据库用户相关的
@@ -1560,45 +1560,45 @@ mysql_users:
 #               username = "root"
 #               password = ""
 #               default_hostgroup = 0
-#               max_connections=1000
-#               default_schema="test"
+#               max_connections = 1000
+#               default_schema = "test"
 #               active = 1
 #       },
 #       { username = "user1" , password = "password" , default_hostgroup = 0 , active = 0 }
 )
 
-# 和MySQL查询规则相关的
+# 和 MySQL 查询规则相关的
 #defines MySQL Query Rules
 mysql_query_rules:
 (
 #       {
-#               rule_id=1
-#               active=1
-#               match_pattern="^SELECT .* FOR UPDATE$"
-#               destination_hostgroup=0
-#               apply=1
+#               rule_id = 1
+#               active = 1
+#               match_pattern ="^SELECT .* FOR UPDATE$"
+#               destination_hostgroup = 0
+#               apply = 1
 #       },
 #       {
-#               rule_id=2
-#               active=1
-#               match_pattern="^SELECT"
-#               destination_hostgroup=1
-#               apply=1
+#               rule_id = 2
+#               active = 1
+#               match_pattern = "^SELECT"
+#               destination_hostgroup = 1
+#               apply = 1
 #       }
 )
 # 调度相关的
 scheduler=
 (
 #  {
-#    id=1
-#    active=0
-#    interval_ms=10000
-#    filename="/var/lib/proxysql/proxysql_galera_checker.sh"
-#    arg1="0"
-#    arg2="0"
-#    arg3="0"
-#    arg4="1"
-#    arg5="/var/lib/proxysql/proxysql_galera_checker.log"
+#    id = 1
+#    active = 0
+#    interval_ms = 10000
+#    filename = "/var/lib/proxysql/proxysql_galera_checker.sh"
+#    arg1 = "0"
+#    arg2 = "0"
+#    arg3 = "0"
+#    arg4 = "1"
+#    arg5 = "/var/lib/proxysql/proxysql_galera_checker.log"
 #  }
 )
 
@@ -1606,29 +1606,29 @@ scheduler=
 mysql_replication_hostgroups=
 (
 #        {
-#                writer_hostgroup=30
-#                reader_hostgroup=40
-#                comment="test repl 1"
+#                writer_hostgroup = 30
+#                reader_hostgroup = 40
+#                comment = "test repl 1"
 #       },
 #       {
-#                writer_hostgroup=50
-#                reader_hostgroup=60
-#                comment="test repl 2"
+#                writer_hostgroup = 50
+#                reader_hostgroup = 60
+#                comment = "test repl 2"
 #        }
 )
 ```
 
-### proxySQL体系结构
+### proxySQL 体系结构
 
 库介绍
 
-- main: ProxySQL最主要的库，修改配置时使用的库，它是一个`内存数据库系统`。所以，修改main库中的配置后，必须将其持久化到disk上才能永久保存。
-    - main是默认的"数据库"名 表里存放后端db实例、用户验证、路由规则等信息。表名以runtime开头的表示proxysql当前运行的配
-        置内容，不能通过dml语句修改，只能修改对应的不以runtime_ 开头的（在内存）里的表，然后LOAD使其生
+- main: ProxySQL 最主要的库，修改配置时使用的库，它是一个 `内存数据库系统`。所以，修改 main 库中的配置后，必须将其持久化到 disk 上才能永久保存。
+    - main 是默认的 "数据库" 名 表里存放后端 db 实例、用户验证、路由规则等信息。表名以 runtime 开头的表示 proxysql 当前运行的配
+        置内容，不能通过 dml 语句修改，只能修改对应的不以 runtime_ 开头的（在内存）里的表，然后 LOAD 使其生
         效，SAVE 使其存到硬盘以供下次重启加载。
-- disk: 磁盘数据库，该数据库结构和内存数据库完全一致。当持久化内存数据库中的配置时，其实就是写入disk库中。磁盘数据库的默认路径为$DATADIR/proxysql.db
-- stats: 统计信息库。这个库包含了ProxySQL收集的关于内部功能的指标。通过这个数据库，可以知道触发某个计数器的频率，通过ProxySQL的SQL执行次数等
-- monitor: 监控后端MySQL节点的相关的库，该库中只有几个log类的库，监控模式收集的监控信息全部存放到对应的log表中（心跳监控，主从复制监控，主从延时监控，读写监控）
+- disk: 磁盘数据库，该数据库结构和内存数据库完全一致。当持久化内存数据库中的配置时，其实就是写入 disk 库中。磁盘数据库的默认路径为$DATADIR/proxysql.db
+- stats: 统计信息库。这个库包含了 ProxySQL 收集的关于内部功能的指标。通过这个数据库，可以知道触发某个计数器的频率，通过 ProxySQL 的 SQL 执行次数等
+- monitor: 监控后端 MySQL 节点的相关的库，该库中只有几个 log 类的库，监控模式收集的监控信息全部存放到对应的 log 表中（心跳监控，主从复制监控，主从延时监控，读写监控）
 - stats_history: 用于存放历史统计数据。
 
 ```sql
@@ -1657,34 +1657,34 @@ show tables from main;
 - Memory：mysql_servers; mysql_users; mysql_query_rules; global_variables; mysql_collations
 - Disk&Configuration File;
 
-tip: 因为有runtime层，因此可以实现配置变更的在线生效，不需要做停机处理
+tip: 因为有 runtime 层，因此可以实现配置变更的在线生效，不需要做停机处理
 
-这里我们唯一手动修改的是memory层，然后通过LOAD去更改runtime层
+这里我们唯一手动修改的是 memory 层，然后通过 LOAD 去更改 runtime 层
 
-ProxySQL接收到LOAD...FROM CONFIG命令时，预期行为如下：
+ProxySQL 接收到 LOAD...FROM CONFIG 命令时，预期行为如下：
 
-- 如果配置文件和内存表中都存在已加载的条目，则LOAD...FROM CONFIG将会覆盖内存表中已配置的条目
-- 如果配置文件中存在但内存表中不存在已加载的条目，则LOAD...FROM CONFIG将会将该条目添加到内存表中
-- 如果内存表中存在但配置文件中不存在的条目，则LOAD...FROM CONFIG不会从内存表中删除该条目
+- 如果配置文件和内存表中都存在已加载的条目，则 LOAD...FROM CONFIG 将会覆盖内存表中已配置的条目
+- 如果配置文件中存在但内存表中不存在已加载的条目，则 LOAD...FROM CONFIG 将会将该条目添加到内存表中
+- 如果内存表中存在但配置文件中不存在的条目，则 LOAD...FROM CONFIG 不会从内存表中删除该条目
 
 ```shell
-# 将Memory修改的命令加载到Runtime, 下面两条命令等价
+将 Memory 修改的命令加载到 Runtime, 下面两条命令等价
 Load ... FROM MEMORY
 LOAD ... TO RUNTIME
 
-# 将Runtime层的命令同步到MEMORY层, 下面两条命令等价
+# 将 Runtime 层的命令同步到 MEMORY 层, 下面两条命令等价
 SAVE ... TO MEMORY
 SAVE ... FROM RUNTIME
 
-# 将Disk的内容同步到Memory
+# 将 Disk 的内容同步到 Memory
 Load ... TO MEMORY
 LOAD ... FROM DISK
 
-# 将MEMROY的内容落盘的DISK
+# 将 MEMROY 的内容落盘的 DISK
 SAVE ... FROM MEMROY
 SAVE ... TO DISK
 
-# 将配置文件的内容加载到内存MEMORY
+# 将配置文件的内容加载到内存 MEMORY
 LOAD ... FROM CONFIG
 ```
 
@@ -1693,7 +1693,7 @@ LOAD ... FROM CONFIG
 - Active/Persist Mysql Users
 
 ```shell
-# Active current in-memory MySQL User configuration
+Active current in-memory MySQL User configuration
 LOAD MYSQL USERS TO RUNTIME;
 
 # Save the current in-memory MySQL User Configuration to disk
@@ -1703,7 +1703,7 @@ SAVE MYSQL USERS TO DISK;
 - Active/Persist MySQL Servers and MySQL Repllication Hostgroup
 
 ```shell
-# Active current in-memory MySQL Server and Replication Hostgroup configuration
+Active current in-memory MySQL Server and Replication Hostgroup configuration
 LOAD MYSQL SERVERS TO RUNTIME;
 
 # Save the current in-memory MySQL Server and Replication Hostgroup configuration to disk
@@ -1713,7 +1713,7 @@ SAVE MYSQL SERVERS TO DISK;
 - Activate/Persist MySQL Query Rules
 
 ```shell
-# Active current in-memory MySQL Query Rule configuration
+Active current in-memory MySQL Query Rule configuration
 LOAD MySQL QUERY RULES TO RUNTIME;
 
 # Save the current in-memory MySQL query Rule configuration to disk
@@ -1723,7 +1723,7 @@ SAVE MYSQL QUERY RULES TO DISK;
 - Activate/Persist MySQL Variables
 
 ```shell
-# Active current in-memory MySQL Variable configuration
+Active current in-memory MySQL Variable configuration
 LOAD MYSQL VARIABLES TO RUNTIME;
 # Save the current in-memory MySQL variable configuration to disk
 SAVE MYSQL VARIABLES TO DISK;
@@ -1732,7 +1732,7 @@ SAVE MYSQL VARIABLES TO DISK;
 - Activate/Persist ProxySQL Admin Varables
 
 ```shell
-# Active current in-memory ProxySQL Admin Variable configuration
+Active current in-memory ProxySQL Admin Variable configuration
 LOAD ADMIN VARIABLES TO RUNTIME;
 # SAVE the current in-memory ProxySQL Admin Variable configuration to disk
 
@@ -1742,7 +1742,7 @@ LOAD ADMIN VARIABLES TO RUNTIME;
 
 #### 主从
 
-前置工作，后端mysql已配置好主从，slave节点设置read_only=1
+前置工作，后端 mysql 已配置好主从，slave 节点设置 read_only = 1
 
 主节点上配置监控账号用于心跳检查（主配置了，从也跟着同步了）
 
@@ -1751,7 +1751,7 @@ create user proxyer@'10.0.0.%' identified by '123456';
 grant REPLICATION CLIENT on *.* to proxyer@'10.0.0.%';
 ```
 
-在后端MySQL配置用户（业务账号）用于读写（主配置了，从也跟着同步了）
+在后端 MySQL 配置用户（业务账号）用于读写（主配置了，从也跟着同步了）
 
 ```sql
 # master节点创建用户并授权
@@ -1761,7 +1761,7 @@ grant all on *.* to sqluser@'10.0.0.%';
 
 
 
-#### proxysql节点
+#### proxysql 节点
 
 配置后端节点
 
@@ -1791,13 +1791,13 @@ save mysql servers to disk;
 配置监控后端节点的用户
 
 ```shell
-# 通过全局变量表，查看监控后端用户名和密码的变量
+通过全局变量表，查看监控后端用户名和密码的变量
 mysql-monitor_username
 mysql-monitor_password
 # 将这两个变量修改为后端服务器上创建的用来监控的账号的用户，密码
 select * from global_variables where variable_name like 'mysql-monitor_%';
 
-# ProxySQL上配置连接mysql的用户名和密码
+# ProxySQL 上配置连接 mysql 的用户名和密码
 set mysql-monitor_username='proxyer';
 set mysql-monitor_password='123456';
 
@@ -1809,7 +1809,7 @@ save mysql variables to disk;
 # 查看连接日志
 select * from mysql_server_connect_log;
 
-# 查询ping日志
+# 查询 ping 日志
 select * from mysql_server_ping_log;
 ```
 
@@ -1843,7 +1843,7 @@ select hostgroup_id,hostname,port,status,weight from mysql_servers;
 2 rows in set (0.000 sec)
 ```
 
-在proxySQL配置，将用户sqluser添加到mysql_users表中，default_hostgroup默认组设置为写组530，当读写分离的路由规则不符合时，会访问默认组的数据库
+在 proxySQL 配置，将用户 sqluser 添加到 mysql_users 表中，default_hostgroup 默认组设置为写组 530，当读写分离的路由规则不符合时，会访问默认组的数据库
 
 ```sql
 insert into mysql_users(username, password,default_hostgroup) values('sqluser','123456','530');
@@ -1856,8 +1856,8 @@ save mysql users to disk;
 
 读写分离路由配置
 
-与规则有关的表：mysql_query_rules和mysql_query_rules_fast_routing，后者是前者的扩展表，1.4.7之后支持
-插入路由规则，将select语句分离到531的读组，select中有一个特殊的语句`SELECT...FOR UPDATE`它会申请写锁，应该路由到530的写组
+与规则有关的表：mysql_query_rules 和 mysql_query_rules_fast_routing，后者是前者的扩展表，1.4.7 之后支持
+插入路由规则，将 select 语句分离到 531 的读组，select 中有一个特殊的语句 `SELECT...FOR UPDATE` 它会申请写锁，应该路由到 530 的写组
 
 ```sql
 insert into mysql_query_rules(rule_id,active,match_digest,destination_hostgroup,apply) VALUES (1,1,'^SELECT.*FOR UPDATE$',530,1), (2,1,'^SELECT',531,1);
@@ -1872,7 +1872,7 @@ save mysql query rules to disk;
 #### 测试
 
 ```shell
-# 6033是业务端口
+6033 是业务端口
 # select 语句被路由到 slave 节点了
 mysql -usqluser -p'123456' -P6033 -h127.0.0.1 -e 'select @@server_id,@@read_only';
 +-------------+-------------+
@@ -1892,19 +1892,19 @@ mysql -usqluser -p'123456' -P6033 -h127.0.0.1 -e 'start transaction;select @@ser
 
 
 
-# MySQL高可用
+# MySQL 高可用
 
 MySQL 官方和社区里推出了很多高可用的解决方案，不同方案的高可用率大体如下，仅供参考（数据引 用自 Percona）
 
 ![image-20250109171905156](pic/image-20250109171905156.png)
 
-*   MMM：Multi-Master Replication Manager for MySQL，Mysql 主主复制管理器是一套灵活的脚本程 序，基于perl实现，用来对mysql replication 进行监控和故障迁移，并能管理 mysql Master-Master 复 制的配置(同一时间只有一个节点是可写的)。
+*   MMM：Multi-Master Replication Manager for MySQL，Mysql 主主复制管理器是一套灵活的脚本程 序，基于 perl 实现，用来对 mysql replication 进行监控和故障迁移，并能管理 mysql Master-Master 复 制的配置(同一时间只有一个节点是可写的)。
 
     *   http://www.mysql-mmm.org 
 
     *   https://code.google.com/archive/p/mysql-master-master/downloads
 
-*   MHA：Master High Availability，对主节点进行监控，可实现自动故障转移至其它从节点；通过提升某 一从节点为新的主节点，基于主从复制实现，还需要客户端配合实现，目前MHA主要支持一主多从的架 构，要搭建MHA，要求一个复制集群中必须最少有三台数据库服务器，一主二从，即一台充当master， 一台充当备用master，另外一台充当从库，出于机器成本的考虑，淘宝进行了改造，目前淘宝TMHA已 经支持一主一从。
+*   MHA：Master High Availability，对主节点进行监控，可实现自动故障转移至其它从节点；通过提升某 一从节点为新的主节点，基于主从复制实现，还需要客户端配合实现，目前 MHA 主要支持一主多从的架 构，要搭建 MHA，要求一个复制集群中必须最少有三台数据库服务器，一主二从，即一台充当 master， 一台充当备用 master，另外一台充当从库，出于机器成本的考虑，淘宝进行了改造，目前淘宝 TMHA 已 经支持一主一从。
 
     *   https://code.google.com/archive/p/mysql-master-ha/
 
@@ -1919,9 +1919,9 @@ MySQL 官方和社区里推出了很多高可用的解决方案，不同方案�
 *   Galera Cluster：
     *   wsrep(MySQL extended with the Write Set Replication) 通过 wsrep 协议在全局实现复 制；任何一节点都可读写，不需要主从复制，实现多主读写。
 *   GR（Group Replication）：
-    *   MySQL官方提供的组复制技术(MySQL 5.7.17引入的技术)，基于原生复制技术 Paxos 算法，实现了 多主更新，复制组由多个 server 成员构成，组中的每个 server 可独立地执行事务，但所有读写事务只在 冲突检测成功后才会提交。
+    *   MySQL 官方提供的组复制技术(MySQL 5.7.17 引入的技术)，基于原生复制技术 Paxos 算法，实现了 多主更新，复制组由多个 server 成员构成，组中的每个 server 可独立地执行事务，但所有读写事务只在 冲突检测成功后才会提交。
     *   GR 没有 master-slave 的概念
-        *   3个节点互相通信，当有事件发生，都会向其他节点传播该事件，然后协商，如果大多数节点都同意这次的事 件，那么该事件将通过，否则该事件将失败或回滚。这些节点可以是单主模型的 (single-primary)，也可 以是多主模型的(multi-primary)。单主模型只有一个主节点可以接受写操作，主节点故障时可以自动选举 主节点。多主模型下，所有节点都可以接受写操作。
+        *   3 个节点互相通信，当有事件发生，都会向其他节点传播该事件，然后协商，如果大多数节点都同意这次的事 件，那么该事件将通过，否则该事件将失败或回滚。这些节点可以是单主模型的 (single-primary)，也可 以是多主模型的(multi-primary)。单主模型只有一个主节点可以接受写操作，主节点故障时可以自动选举 主节点。多主模型下，所有节点都可以接受写操作。
 
 ![image-20250109181301716](pic/image-20250109181301716.png)
 
@@ -1933,19 +1933,19 @@ MySQL 官方和社区里推出了很多高可用的解决方案，不同方案�
 ![image-20250109181506631](pic/image-20250109181506631.png)
 
 *   TiDB Server
-    *    TiDB Server 负责接收 SQL 请求，处理 SQL 相关的逻辑，并通过 PD 找到存储计算所需数据的  TiKV 地址，与 TiKV 交互获取数据，最终返回结果。TiDB Server 是无状态的，其本身并不存储数据， 只负责计算，可以无限水平扩展，可以通过负载均衡组件（LVS、HAProxy或F5）对外提供统一的接入地址。
+    *    TiDB Server 负责接收 SQL 请求，处理 SQL 相关的逻辑，并通过 PD 找到存储计算所需数据的  TiKV 地址，与 TiKV 交互获取数据，最终返回结果。TiDB Server 是无状态的，其本身并不存储数据， 只负责计算，可以无限水平扩展，可以通过负载均衡组件（LVS、HAProxy 或 F5）对外提供统一的接入地址。
 *    PD Server
-    *   Placement Driver（简称PD）是整个集群的管理模块，其主要工作有三个：
-        *   一是存储集群的元信息 （某个Key存储在那个TiKV节点）
-        *   二是对TiKV集群进行调度和负载均衡（如数据的迁移、Raft group  leader的迁移等）
+    *   Placement Driver（简称 PD）是整个集群的管理模块，其主要工作有三个：
+        *   一是存储集群的元信息 （某个 Key 存储在那个 TiKV 节点）
+        *   二是对 TiKV 集群进行调度和负载均衡（如数据的迁移、Raft group  leader 的迁移等）
         *   三是分配全局唯一且递增的事务 ID。
-    *    PD 是一个集群，需要部署奇数个节点，一般线上推荐至少部署 3 个节点。PD在选举的过程中无法对外 提供服务，这个时间大约是 3 秒。
+    *    PD 是一个集群，需要部署奇数个节点，一般线上推荐至少部署 3 个节点。PD 在选举的过程中无法对外 提供服务，这个时间大约是 3 秒。
 *   TiKV Server
-    *    TiKV Server 负责存储数据，从外部看 TiKV 是一个分布式的提供事务的 Key-Value 存储引擎。 存储数据的基本单位是 Region，每个Region负责存储一个 Key Range（从StartKe数据，每个TiKV节点 会负责多个Region。TiKV 使用 Raft 协议做复制，保持数据的一致性和容灾。副本以 Region 为单位进 行管理，不同节点上的多个 Region 构成一个 Raft Group，互为副本。数据在多个 TiKV 之间的负载均 衡由 PD 调度，这里也就是以 Region 为单位进行调度。
+    *    TiKV Server 负责存储数据，从外部看 TiKV 是一个分布式的提供事务的 Key-Value 存储引擎。 存储数据的基本单位是 Region，每个 Region 负责存储一个 Key Range（从 StartKe 数据，每个 TiKV 节点 会负责多个 Region。TiKV 使用 Raft 协议做复制，保持数据的一致性和容灾。副本以 Region 为单位进 行管理，不同节点上的多个 Region 构成一个 Raft Group，互为副本。数据在多个 TiKV 之间的负载均 衡由 PD 调度，这里也就是以 Region 为单位进行调度。
 
 
 
-## MHA方案
+## MHA 方案
 
 官方文档
 
@@ -1953,33 +1953,33 @@ https://github.com/yoshinorim/mha4mysql-manager/wiki
 
 ### MHA 集群架构与原理
 
-一个 MHA-manager 节点可以管理多个 MySQL 集群。但MHA 也是 "一次性" 的高可用性解决方案， 一旦被监管的Mysql集群发生故障转移，Manager 会自动退出管理。如果你想要Mysql集群被MHA管理 的话，需要手工开启监管。
+一个 MHA-manager 节点可以管理多个 MySQL 集群。但 MHA 也是 "一次性" 的高可用性解决方案， 一旦被监管的 Mysql 集群发生故障转移，Manager 会自动退出管理。如果你想要 Mysql 集群被 MHA 管理 的话，需要手工开启监管。
 
 ![image-20250109184254103](pic/image-20250109184254103.png)
 
-MHA工作原理
+MHA 工作原理
 
 ![image-20250109184306850](pic/image-20250109184306850.png)
 
-*   MHA利用 SELECT 1 As Value 指令判断 master 服务器的健康性，一旦 master 宕机，MHA 从宕机 崩溃的 master 保存二进制日志事件（binlog events）
+*   MHA 利用 SELECT 1 As Value 指令判断 master 服务器的健康性，一旦 master 宕机，MHA 从宕机 崩溃的 master 保存二进制日志事件（binlog events）
 *   识别含有最新更新的 slave
 *   应用差异的中继日志（relay log）到其他的 slave
 *   应用从 master 保存的二进制日志事件（binlog events）到所有 slave 节点
 *   提升一个 slave 为新的 master
 *   使其他的 slave 连接新的 master 进行复制
 *   故障服务器自动被剔除集群(masterha_conf_host)，将配置信息去掉
-*   旧的 Master的 VIP 漂移到新的 master上，用户应用就可以访问新的 Master
+*   旧的 Master 的 VIP 漂移到新的 master 上，用户应用就可以访问新的 Master
 
 如何选主
 
-*   如果设定权重(candidate_master=1)，按照权重强制指定新主，但是默认情况下如果一个 slave 落 后 master 二进制日志超过 100M 的relay logs，即使有权重，也会失效，如果设置  check_repl_delay=0，即使落后很多日志，也强制选择其为新主
+*   如果设定权重(candidate_master = 1)，按照权重强制指定新主，但是默认情况下如果一个 slave 落 后 master 二进制日志超过 100M 的 relay logs，即使有权重，也会失效，如果设置  check_repl_delay = 0，即使落后很多日志，也强制选择其为新主
 *   如果从库数据之间有差异，最接近于 Master 的 slave 成为新主
 *   如果所有从库数据都一致，按照配置文件顺序最前面的当新主
 
 数据是如何恢复
 
-*   当主服务器的 SSH 还能连接，从库对比主库 position 或者 GTID 号，将二进制日志保存至各个从 节点并且应用(执行save_binary_logs 实现)
-*   当主服务器的 SSH 不能连接，对比从库之间的 relaylog 的差异(执行apply_diff_relay_logs[实现])
+*   当主服务器的 SSH 还能连接，从库对比主库 position 或者 GTID 号，将二进制日志保存至各个从 节点并且应用(执行 save_binary_logs 实现)
+*   当主服务器的 SSH 不能连接，对比从库之间的 relaylog 的差异(执行 apply_diff_relay_logs [实现])
 
 注意：为了尽可能的减少主库硬件损坏宕机造成的数据丢失，因此在配置 MHA 的同时建议配置成  **MySQL 的半同步复制**
 
@@ -1989,20 +1989,20 @@ MHA工作原理
 
 MHA 软件由两部分组成
 
-*   Manager工具包
+*   Manager 工具包
 
     *   [Release mha4mysql-manager-0.58 · yoshinorim/mha4mysql-manager](https://github.com/yoshinorim/mha4mysql-manager/releases/tag/v0.58)
 
     *   ```shell
-        masterha_check_ssh                  #检查MHA的SSH配置状况
-        masterha_check_repl                 #检查MySQL复制状况
-        masterha_manger                     #启动MHA
-        masterha_check_status               #检测当前MHA运行状态
-        masterha_master_monitor             #检测master是否宕机
+        masterha_check_ssh                  #检查 MHA 的 SSH 配置状况
+        masterha_check_repl                 #检查 MySQL 复制状况
+        masterha_manger                     #启动 MHA
+        masterha_check_status               #检测当前 MHA 运行状态
+        masterha_master_monitor             #检测 master 是否宕机
         masterha_master_switch              #故障转移（自动或手动）
-        masterha_conf_host                  #添加或删除配置的server信息
-        masterha_stop --conf=app1.cnf       #停止MHA
-        masterha_secondary_check            #两个或多个网络线路检查MySQL主服务器的可用
+        masterha_conf_host                  #添加或删除配置的 server 信息
+        masterha_stop --conf=app1.cnf       #停止 MHA
+        masterha_secondary_check            #两个或多个网络线路检查 MySQL 主服务器的可用
         ```
 
 *   Node 工具包
@@ -2010,36 +2010,36 @@ MHA 软件由两部分组成
     *   [Release mha4mysql-node-0.58 · yoshinorim/mha4mysql-node](https://github.com/yoshinorim/mha4mysql-node/releases/tag/v0.58)
 
     *   ```shell
-        save_binary_logs                    #保存和复制master的二进制日志
-        apply_diff_relay_logs               #识别差异的中继日志事件并将其差异的事件应用于其他的slave
-        filter_mysqlbinlog                  #去除不必要的ROLLBACK事件（MHA已不再使用此工具）
-        purge_relay_logs                    #清除中继日志（不会阻塞SQL线程）
+        save_binary_logs                    #保存和复制 master 的二进制日志
+        apply_diff_relay_logs               #识别差异的中继日志事件并将其差异的事件应用于其他的 slave
+        filter_mysqlbinlog                  #去除不必要的 ROLLBACK 事件（MHA 已不再使用此工具）
+        purge_relay_logs                    #清除中继日志（不会阻塞 SQL 线程）
         ```
 
-MHA自定义扩展
+MHA 自定义扩展
 
 ```shell
-secondary_check_script              #通过多条网络路由检测master的可用性
-master_ip_ailover_script            #更新Application使用的masterip
-shutdown_script                     #强制关闭master节点
+secondary_check_script              #通过多条网络路由检测 master 的可用性
+master_ip_ailover_script            #更新 Application 使用的 masterip
+shutdown_script                     #强制关闭 master 节点
 report_script                       #发送报告
 init_conf_load_script               #加载初始配置参数
-master_ip_online_change_script      #更新master节点ip地址
+master_ip_online_change_script      #更新 master 节点 ip 地址
 ```
 
-MHA配置文件：
+MHA 配置文件：
 
-*   global配置，为各application提供默认配置，默认文件路径 /etc/masterha_default.cnf
-*   application配置：为每个主从复制集群
+*   global 配置，为各 application 提供默认配置，默认文件路径 /etc/masterha_default.cnf
+*   application 配置：为每个主从复制集群
 
 ### 实践
 
 #### 跨主机免密码
 
-manager节点上
+manager 节点上
 
 ```shell
-# 生成密钥对，并在当前主机完成C/S校验
+生成密钥对，并在当前主机完成 C/S 校验
 ssh-keygen
 ssh-copy-id 127.1
 
@@ -2066,7 +2066,7 @@ mkdir -pv /data/mysql/logbin
 chown -R mysql:mysql /data/mysql/
 ```
 
-更改apparmor使其mysql能够有读取指定路径的权限（ubuntu中）
+更改 apparmor 使其 mysql 能够有读取指定路径的权限（ubuntu 中）
 
 ```shell
 vim /etc/apparmor.d/usr.sbin.mysqld
@@ -2074,19 +2074,19 @@ vim /etc/apparmor.d/usr.sbin.mysqld
 /data/mysql/** rw,
 /data/mysql rw,
 
-# 重新加载apparmor
+# 重新加载 apparmor
 apparmor_parser -r /etc/apparmor.d/usr.sbin.mysqld
 ```
 
 装半同步复制插件
 
 ```shell
-# 半同步复制
+半同步复制
 INSTALL PLUGIN rpl_semi_sync_master SONAME 'semisync_master.so';
 INSTALL PLUGIN rpl_semi_sync_slave SONAME 'semisync_slave.so'; 
 ```
 
-主节点mysql配置
+主节点 mysql 配置
 
 ```ini
 vim /etc/mysql/mysql.conf.d/mysqld.cnf 
@@ -2118,7 +2118,7 @@ grant replication slave on *.* to repluser@'10.0.0.%';
 flush privileges;
 ```
 
-下载节点包，之前git链接中，找对应系统的包
+下载节点包，之前 git 链接中，找对应系统的包
 
 ```shell
 wget https://github.com/yoshinorim/mha4mysql-node/releases/download/v0.58/mha4mysql-node_0.58-0_all.deb
@@ -2128,7 +2128,7 @@ apt install ./mha4mysql* -y
 
 
 
-**配置VIP，此IP会在不同的Mysql节点上漂移**
+**配置 VIP，此 IP 会在不同的 Mysql 节点上漂移**
 
 ```shell
 ifconfig eth0:1 10.0.0.100/24
@@ -2137,7 +2137,7 @@ ifconfig eth0:1 10.0.0.100/24
 ifconfig eth0:1
 ```
 
-对mha获取数据的授权操作
+对 mha 获取数据的授权操作
 
 ```sql
 create user mhauser@'10.0.0.%' identified by '123456';
@@ -2158,7 +2158,7 @@ mkdir -pv /data/mysql/logbin
 chown -R mysql:mysql /data/mysql/
 ```
 
-更改apparmor使其mysql能够有读取指定路径的权限（ubuntu中）
+更改 apparmor 使其 mysql 能够有读取指定路径的权限（ubuntu 中）
 
 ```shell
 vim /etc/apparmor.d/usr.sbin.mysqld
@@ -2166,19 +2166,19 @@ vim /etc/apparmor.d/usr.sbin.mysqld
 /data/mysql/** rw,
 /data/mysql rw,
 
-# 重新加载apparmor
+# 重新加载 apparmor
 apparmor_parser -r /etc/apparmor.d/usr.sbin.mysqld
 ```
 
 装半同步复制插件
 
 ```shell
-# 半同步复制
+半同步复制
 INSTALL PLUGIN rpl_semi_sync_slave SONAME 'semisync_slave.so'; 
 INSTALL PLUGIN rpl_semi_sync_master SONAME 'semisync_master.so';
 ```
 
-从节点mysql配置
+从节点 mysql 配置
 
 ```ini
 vim /etc/mysql/mysql.conf.d/mysqld.cnf 
@@ -2199,7 +2199,7 @@ rpl_semi_sync_master_enabled
 systemctl restart mysql.service
 ```
 
-配置主从同步（mysql中）
+配置主从同步（mysql 中）
 
 ```sql
 CHANGE MASTER TO MASTER_HOST='10.0.0.221', MASTER_USER='repluser', MASTER_PASSWORD='123456', MASTER_PORT=3306, MASTER_AUTO_POSITION=1;
@@ -2221,7 +2221,7 @@ show slave status\G
 
 
 
-下载节点包，之前git链接中，找对应系统的包
+下载节点包，之前 git 链接中，找对应系统的包
 
 ```shell
 wget https://github.com/yoshinorim/mha4mysql-node/releases/download/v0.58/mha4mysql-node_0.58-0_all.deb
@@ -2233,18 +2233,18 @@ apt install ./mha4mysql* -y
 
 #### manager 管理节点
 
-centos7.9中实验，ubuntu22.04也可实验（但是perl版本有点高，`sprintf` 对参数的数量和占位符的匹配检查更为严格）
+centos7.9 中实验，ubuntu22.04 也可实验（但是 perl 版本有点高，`sprintf` 对参数的数量和占位符的匹配检查更为严格）
 
-*   ubuntu22.04将`/usr/share/perl5/MHA/NodeUtil.pm`中的两处`my $result = sprintf( '%03d%03d', $str =~ m/(\d+)/g );`改为`my $result = sprintf('000000000');`
+*   ubuntu22.04 将 `/usr/share/perl5/MHA/NodeUtil.pm` 中的两处 `my $result = sprintf( '%03d%03d', $str =~ m/(\d+)/g );` 改为 `my $result = sprintf('000000000');`
 *   或自行其他办法解决
 
-下载管理包，之前git链接中，找对应系统的包
+下载管理包，之前 git 链接中，找对应系统的包
 
 ```shell
 wget https://github.com/yoshinorim/mha4mysql-node/releases/download/v0.58/mha4mysql-node_0.58-0_all.deb
 
 wget https://github.com/yoshinorim/mha4mysql-manager/releases/download/v0.58/mha4mysql-manager_0.58-0_all.deb
-# 先装node再manager
+# 先装 node 再 manager
 apt install ./mha4mysql* -y
 ```
 
@@ -2275,7 +2275,7 @@ chmod a+x /usr/local/bin/sendmail.sh
 sendmail.sh
 ```
 
-**切换VIP的perl脚本**
+**切换 VIP 的 perl 脚本**
 
 ```perl
 vim /usr/local/bin/master_ip_failover
@@ -2405,13 +2405,13 @@ hostname=10.0.0.223
 hostname=10.0.0.224 
 ```
 
-检查主从复制环境, mysql节点会自动创建  remote_workdir=/data/mastermha/app1/
+检查主从复制环境, mysql 节点会自动创建  remote_workdir =/data/mastermha/app1/
 
 ```shell
 masterha_check_repl --conf=/etc/mastermha/app1.cnf
 ```
 
-查看当前mysql 集群状态
+查看当前 mysql 集群状态
 
 ```shell
 masterha_check_status --conf=/etc/mastermha/app1.cnf
@@ -2446,11 +2446,11 @@ cat /data/mastermha/app1/manager.log
 systemctl stop mysqld.service
 ```
 
-查看VIP是否漂移到slave节点中
+查看 VIP 是否漂移到 slave 节点中
 
 
 
-查看 mha-manager 日志,提示提升了新的 master 节点，发送告警日志
+查看 mha-manager 日志, 提示提升了新的 master 节点，发送告警日志
 
 ```shell
 cat /data/mastermha/app1/manager.log
@@ -2476,7 +2476,7 @@ start slave;
 show slave status\G
 ```
 
-#### 复原mha服务
+#### 复原 mha 服务
 
 清理旧有信息
 
@@ -2484,7 +2484,7 @@ show slave status\G
 rm -rf /data/mastermha/app1/*
 ```
 
-将之前移除掉的master节点信息修复回来
+将之前移除掉的 master 节点信息修复回来
 
 ```shell
 vim /etc/mastermha/app1.cnf
@@ -2501,4 +2501,403 @@ masterha_manager --conf=/etc/mastermha/app1.cnf --remove_dead_master_conf --igno
 ```
 
 ## Galera Cluster（GC）
+
+Galera Cluster: 集成了 Galera 插件的 MySQL 集群，是一种新型的数据不共享的，高度冗余的高可用方案，目前 Galera Cluster 有两个版本，分别是 percona Xtradb Cluster 及 MariaDB Cluster，Galera 本身是具有多主特性的，即采用 multi-master 的集群架构，是一个既稳健，又在数据一致性，完整性及高性能方面有出色表现的高可用解决方案
+
+Galera Cluster 是底层的同步复制协议和库，提供同步多主复制的基础功能。
+
+相比传统的主从复制架构，Galera Cluster 解决的最核心问题是，
+
+在三个实例（节点）之间，它们的 关系是对等的，multi-master 架构的，在多节点同时写入的时候，能够保证整个集群数据的一致性，完整性 与正确性。
+
+
+
+![image-20250111093329140](pic/image-20250111093329140.png)
+
+*   Mysql 的多主架构的特点
+    *   一般需要上层应用来配合，比如 先要约定每个表必须要有自增列，并且如果是 2 个节点的情况下，一个节点只能写偶数的值，而另一个节点只能 写奇数的值，同时 2 个节点之间互相做复制，因为 2 个节点写入的东西不同，所以复制不会冲突，在这种约定之 下，可以基本实现多 master 的架构，也可以保证数据的完整性与一致性。但这种方式使用起来还是有限制，同 时还会出现复制延迟，并且不具有扩展性，不是真正意义上的集群。
+*   GC 多主架构的特点
+    *   解决了 诟病已久的复制延迟问题，基本上可以达到实时同步。而且节点与节点之间，它们互相的关系是对等的。    
+    *   PXC 是在存储引擎层实现的同步复制，而非异步复制，所以其数据的一致性是相当高的。
+    *   优点
+        *   多主架构：真正的多点读写的集群，在任何时候读写数据，都是最新的
+        *   同步复制：改善了主从复制延迟问题，基本上达到了实时同步
+        *   并发复制：从节点 APPLY 数据时，支持并行执行，更好的性能
+        *   故障切换：在出现数据库故障时，因支持多点写入，切换容易
+        *   热插拔：在服务期间，如果数据库挂了，只要监控程序发现的够快，不可服务时间就会非常少。在节点故障 期间，节点本身对集群的影响非常小
+        *   自动节点克隆：在新增节点，或者停机维护时，增量数据或者基础数据不需要人工手动备份提供，Galera  Cluster 会自动拉取在线节点数据，最终集群会变为一致
+        *   对应用透明：集群的维护，对应用程序是透明的
+    *   缺点
+        *   任何更新事务都需要全局验证通过，才会在其他节点执行，则集群性能由集群中最差性能节点决定（一般集 群节点配置都是一样的）
+        *   新节点加入或延后较大的节点重新加入需全量拷贝数据 (SST，State Snapshot Transfer)，作为  donor ( 贡献者，如： 同步数据时的提供者) 的节点在同步过程中无法提供读写
+        *   只支持 innodb 存储引擎的表
+
+
+
+### GC 工作原理
+
+Galera 复制是一种基于验证的复制，基于验证的复制使用组通信和事务排序技术实现同步复制。它通 过广播并发事务之间建立的全局总序来协调事务提交。简单说就是事务必须以相同的顺序应用于所有实 例。
+
+事务在本节点乐观执行，然后在提交时运行一个验证过程以保证全局数据一致性。
+
+所谓乐观执行是 指，事务在一个节点提交时，被认为与其它节点上的事务没有冲突，首先在本地执行，然后再发送到所 有节点做冲突检测，无冲突时在所有节点提交，否则在所有节点回滚。
+
+要么全体一起做，要么全部都 不做。
+
+如果操作同时符合以下三个条件，则会认为此次提交存在冲突（验证失败）
+
+- 两个事务来源于不同节点
+- 两个事务包含相同的主键
+- 老事务对新事务不可见，即老事务未提交完成。新老事务的划定依赖于全局事务总序，即 GTID
+
+![image-20250111094214669](pic/image-20250111094214669.png)
+
+GC 中的数据强一致，肯定是所有的数据库中的数据都是一致的。
+
+```shell
+http://galeracluster.com/documentation-webpages/galera-documentation.pdf
+http://galeracluster.com/documentation-webpages/index.html
+https://www.percona.com/doc/percona-xtradb-cluster/LATEST/index.html
+https://mariadb.com/kb/en/library/getting-started-with-mariadb-galera-cluster/
+```
+
+ Galera Cluster 包括两个组件
+
+*   Galera replication library (galera-3)
+*    WSREP：MySQL extended with the Write Set Replication
+
+ WSREP 实现
+
+*   PXC：Percona XtraDB Cluster，是 Percona 对 Galera 的实现
+*   MariaDB Galera Cluster
+
+**两者都需要至少三个节点，不能安装 mysql server 或 mariadb-server**
+
+### PXC
+
+基于 Galera 的高可用方案主要有 MariaDB Galera Cluster 和 Percona XtraDB Cluster，目前 PXC 架构在生产线上用的更多而且更成熟一些。
+
+https://www.percona.com/downloads 
+
+https://docs.percona.com/percona-xtradb-cluster/8.4/quickstart-overview.html
+
+Percona Server 是一款独立的数据库产品，其可以完全与 MySQL 兼容，可以在不更改代码的情况了下 将存储引擎更换成 XtraDB 。
+
+Percona 团队的最终声明是“Percona Server 是由 Oracle 发布的最接近官方 MySQL Enterprise 发 行版的版本”，因此与其他更改了大量基本核心 MySQL 代码的分支有所区别。
+
+Percona Server 的一个缺点是 他们自己管理代码，不接受外部开发人员的贡献，以这种方式确保他们对产品中所包含功能的控制。
+
+Percona XtraDB Cluster (PXC) 是一种数据库集群解决方案，它是基于 MySQL 的 Percona Server 以及 Galera Cluster 实现的。PXC 提供了以下功能：
+
+- 基于 Percona Server: PXC 使用 Percona Server for MySQL，这是一种增强版的 MySQL，提供了更多的功能和优化。
+- 集成 Galera: PXC 集成了 Galera Cluster 进行同步多主复制，实现高可用性和一致性。
+- 自动化: 提供了自动化配置和管理工具，使集群管理更加简便。
+- 额外的工具和支持: 提供了监控、备份和其他管理工具，以及企业级支持
+
+#### PXC 细节原理
+
+##### **PXC 最常使用如下 4 个端口号：**
+
+*   3306：数据库对外服务的端口号
+*   4444：请求 SST 的端口号
+*   4567：组成员之间进行沟通的端口号
+*   4568：用于传输 IST 的端口号
+
+##### **集群中节点的数量**
+
+整个集群中节点数量应该控制在最少 3 个，最多 8 个的范围内。最少 3 个节点是为了防止出现脑裂现象，因 为只有在 2 个节点下才会出现此现象。脑裂现象的标志就是输入任何命令，返回的结果都是 unknown  command。 
+
+节点在集群中，会因新节点的加入或故障、同步失效等原因，发生状态的切换。
+
+##### **节点的数据传输方式**
+
+*   SST：State Snapshot Transfer，全量数据传输
+    *   SST数据传输有xtrabackup、mysqldump和rsync三种方式
+    *   但生产环境中一般数据量较小时，可以使用SST全量数据传输，但也只使用xtrabackup方法。
+*   IST：Incremental State Transfer，增量数据传输
+    *   增量数据传输就只有一种方式xtrabackup
+
+##### **节点状态**
+
+![image-20250111095715622](pic/image-20250111095715622.png)
+
+- open: 节点启动成功，尝试连接到集群时的状态
+- primary：节点已处于集群中，在新节点加入并选取donor进行数据同步时的状态
+- joiner：节点处于等待接收同步文件时的状态
+- joined：节点完成数据同步工作，尝试保持和集群进度一致时的状态
+- synced：节点正常提供服务时的状态，表示已经同步完成并和集群进度保持一致
+- donor：节点处于为新加入的节点提供全量数据时的状态
+
+备注：donor节点就是数据的贡献者，如果一个新节点加入集群，此时又需要大量数据的SST数据传输，就有可能因此而拖垮整个集群的性能，所以在生产环境中，如果数据量较小，还可以使用SST全量数据传输，但如果数据量很大就不建议使用这种方式，可以考虑先建立主从关系，然后再加入集群
+
+新节点加入或延后较大的节点重新加入需全量拷贝数据 (SST，State Snapshot Transfer)，作为  donor ( 贡献者，如： 同步数据时的提供者) 的节点在同步过程中无法提供读写
+
+##### GCache模块
+
+在PXC中一个特别重要的模块，它的核心功能就是为每个节点缓存当前最新的写集。如果有新节点加入进来，就可以把新数据的增量传递给新节点，而不需要再使用SST传输方式，这样可以让节点更快地加入集群中，涉及参数如下：
+
+- gcache.size: 缓存写集增量信息的大小，它的默认大小是128MB，通过wsrep_provider_options参数设置，建议调整为2GB~4GB范围，足够的空间便于缓存更多的增量信息
+- gcache.mem.size: GCache中内存缓存的大小，适度调大可以提高整个集群的性能
+- gcache.page_size: 如果内存不够用（GCache不足），就直接将写集写入磁盘文件
+
+#### PXC 8.4 实现
+
+*   10.0.0.204
+    *   node1
+
+*   10.0.0.205
+    *   node2
+
+*   10.0.0.206
+    *   node3
+*   10.0.0.12
+    *   node4作为后续加入节点
+
+Percona XtraDB 是一种特殊形态的 MySQL 数据库，与 MySQL 官方的发行版及 MariaDB 是两种 不同的产品，要求安装节点上没有 MySQL 和 MariaDB。另外提前关闭 SElinux，关闭防火墙，保证时间 同步。
+
+##### 安装软件
+
+centos配置源安装
+
+```shell
+yum install https://repo.percona.com/yum/percona-release-latest.noarch.rpm
+percona-release setup pxc-80
+yum install percona-xtradb-cluster
+
+-------------------------------------------
+yum install https://repo.percona.com/yum/percona-release-latest.noarch.rpm
+percona-release setup pxc-80
+# 下载包到本地
+yum install --downloadonly --destdir=./ percona-xtradb-cluster
+# 本地包安装
+yum install ./percona-xtradb-cluster/*
+```
+
+ubuntu配置源安装
+
+```shell
+apt install -y wget gnupg2 lsb-release curl
+wget https://repo.percona.com/apt/percona-release_latest.generic_all.deb
+dpkg -i percona-release_latest.generic_all.deb
+percona-release setup pxc80
+apt install -y percona-xtradb-cluster
+
+----------------------------------------------------------------------
+apt install -y wget gnupg2 lsb-release curl
+wget https://repo.percona.com/apt/percona-release_latest.generic_all.deb
+dpkg -i percona-release_latest.generic_all.deb
+percona-release setup pxc80
+# 下载包到本地
+apt-get install --download-only -o dir::cache=./ percona-xtradb-cluster
+# 本地包安装
+apt install ./percona-xtradb-cluster/*
+```
+
+##### 配置文件
+
+```ini
+vim /etc/my.cnf
+vim /etc/mysql/mysql.conf.d/mysqld.cnf
+
+[client]
+socket=/var/lib/mysql/mysql.sock
+
+[mysqld]
+server-id=204   # 指定server-id
+...
+wsrep_cluster_address=gcomm://10.0.0.204,10.0.0.205,10.0.0.206
+# 集群中所有节点都写在这里
+...
+wsrep_node_address=10.0.0.204  # 当前节点IP，每个节点唯一
+wserp_cluster_name=pxc-cluster # 集群名称，这里随便写
+wsrep_node_name=pxc-cluster-node-1   # 当前节点名称，每个节点唯一
+...
+pxc-encrypt-cluster-traffic=OFF   # 不使用加密传输，手动添加
+```
+
+| 配置项                     | 默认值                                | 说明                                                 |
+| -------------------------- | ------------------------------------- | ---------------------------------------------------- |
+| `wsrep_provider`           | `/usr/lib64/galera3/libgalera_smm.so` | 指定 Galera 库的路径                                 |
+| `wsrep_cluster_address`    | `gcomm://`                            | 集群中各节点地址                                     |
+| `binlog_format`            | `ROW`                                 | 二进制日志格式                                       |
+| `default_storage_engine`   | `InnoDB`                              | 默认存储引擎                                         |
+| `wsrep_slave_threads`      | `8`                                   | 默认工作线程数                                       |
+| `wsrep_log_conflicts`      |                                       | 是否记录冲突日志                                     |
+| `innodb_autoinc_lock_mode` | `2`                                   | 存储引擎加锁方式，当前只能是 `2`                     |
+| `wsrep_node_address`       | `192.168.70.63`                       | 当前节点 IP                                          |
+| `wsrep_cluster_name`       | `pxc-cluster`                         | 集群名称                                             |
+| `wsrep_node_name`          | `pxc-cluster-node-1`                  | 当前节点名称                                         |
+| `pxc_strict_mode`          | `ENFORCING`                           | 是否使用测试功能，默认不使用                         |
+| `wsrep_sst_method`         | `xtrabackup-v2`                       | 数据同步方式，支持 `mysqldump|skip|rsync|xtrabackup` |
+
+```ini
+# 如果启动加密数据传输，则要保证每个节点的公私密钥对和CA证书保持一致，且mysqld和sst处都要配置
+[mysqld]
+wsrep_provider_options="socket.ssl_key"=server-key.pem;socket.ssl_cert=server-cert.pem;socket.ssl_ca=ca.pem"
+
+[sst]
+encrypt=4
+ssl-key=server-key.pem
+ssl-ca=ca.pem
+ssl-cert=server-cert.pem
+```
+
+尽管 Galera Cluster 不再需要通过 binlog 的形式进行同步，但还是建议在配置文件中开启二进制日志功 能，原因是后期如果有新节点需要加入，旧的节点通过 SST 全量传输的方式向新节点传输数据，很可能 会拖垮集群性能，所以让新节点先通过 binlog 方式完成同步后再加入集群会是一种更好的选择
+
+##### 启动
+
+```shell
+# 启动第一个节点，集群中的任意一个节点都可以最先启动
+systemctl start mysql@bootstrap.service
+
+# 查看端口，3360,33060,4567
+
+# 查找初始用户名和密码进行连接
+cat /var/log/mysqld.log|grep password
+
+# 使用该密码客户端连接
+mysql -uroot -p'XXXX'
+
+# 当前无任何权限，要先修改密码
+alter user root@'localhost' identified by '123456';
+
+# 查看相关变量
+SHOW VARIABLES LIKE 'wsrep%'\G
+
+# 集群状态
+SHOW STATUS LIKE 'wsrep%';
+SHOW STATUS LIKE 'wsrep_local_sta%';
+SHOW STATUS LIKE 'wsrep_cluster%';
+#wsrep_cluster_size  当前集群中节点数
+#wsrep_local_state_comment  SST同步状态 Synced:数据己同步完成，Joiner:SST没有完成，所有节点都是Synced 才能加入新节点
+#wsrep_cluster_status  Primary表示已经完全连接并准备好
+```
+
+##### 启动后续节点
+
+启动后续节点，只要启动成功，pxc-1的数据会自动同步过来
+
+```shell
+systemctl start mysql      # node-2
+mysql -uroot -p'123456'    # 使用node-1中的用户名和密码连接
+
+# node-3同上
+
+# 在任意节点查询此变量，值为当前集群中的节点数
+SHOW STATUS LIKE 'wsrep_cluster_size';
+```
+
+##### 测试
+
+```sql
+create database db1; use db1;
+mysql> CREATE TABLE `stu`  (
+    ->  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+    ->  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL 
+    -> DEFAULT '',
+    ->  `age` int NULL DEFAULT 0,
+    ->  PRIMARY KEY (`id`) USING BTREE
+    ->  );
+    
+mysql> insert into db1.stu(name,age)values('tom',10),('jerry',20),('spike',30);
+
+# 其他节点
+mysql> select * from db1.stu;
++----+-------+------+
+| id | name  | age  |
++----+-------+------+
+|  1 | tom   |   10 |
+|  4 | jerry |   20 |
+|  7 | spike |   30 |
++----+-------+------+
+3 rows in set (0.00 sec)
+
+# 另外节点插入
+insert into db1.stu(name,age)values('tom-15',10),('jerry-15',20),('spike-15',30);
+
+# 查看
+select * from db1.stu;
++----+----------+------+
+| id | name     | age  |
++----+----------+------+
+|  1 | tom      |   10 |
+|  4 | jerry    |   20 |
+|  7 | spike    |   30 |
+|  9 | tom-15   |   10 |
+| 12 | jerry-15 |   20 |
+| 15 | spike-15 |   30 |
++----+----------+------+
+6 rows in set (0.00 sec)
+```
+
+![image-20250111120420350](pic/image-20250111120420350.png)
+
+```sql
+# 同时写入
+# id分别为25，26，27
+# 因为三台节点插入数据，分别使用各自的id，所以，不会导致冲突
+
+# 但是，同时在三个节点执行 insert 语句，并指定相同主键，
+# 只有一个节点执行成功，然后将该条数据同步到了其它节点，则另外节点无法写入。
+```
+
+
+
+##### 往PXC集群中加入新节点
+
+```shell
+# 前置条件，待加入集群的机器，已完成了前置操作，安装了相同版本的PXC
+# 将其他节点的/etc/my.cnf文件拷贝到新节点进行修改
+
+# 修改配置项，在当前节点修改配置，其他节点不用修改，但为了保证后续重启等操作，将每个节点中的wsrep_cluster_address都进行修改
+
+# 启动
+systemctl start mysql
+```
+
+一个节点加入到Galera集群有两种情况，新节点加入集群，暂时离组的成员再次加入集群
+
+*   新节点加入Galera集群
+    *   新节点加入集群时，需要当前集群中选择一个Donor节点来同步数据，也就是所谓的stat_snapshot_tranfer(SST)过程。SST同步数据的方式由选项wsrep_sst_method决定，一般选择的是xtrabackup
+    *   必须注意，新节点加入Galera时，会删除新节点上所有已有数据，在通过xtrabackup(假设使用的是该方式)从Donor处完整备份所有数据进行恢复，所以，如果数据量很大，新节点加入过程会很慢。而且，在一个新节点成为synced之前，不要同时加入其他新节点，否则很容易将集群压垮。如果这种情况，可以考虑使用`wsrep_sst_method=rsync`来做增量同步，既然是增量同步，最好保证新节点上已经有一部分数据基础，否则和全量同步没什么区别，且这样会对Donor节点机上全局readonly锁
+*   旧节点加入Galera群
+    *   如果旧节点加入Galera集群，说明这个节点在之前已经在Galera集群中呆过，有一部分数据基础，缺少的只是它离开集群时的数据。这时加入集群时，会采用IST(incremental snapshot transfer)传输机制，即增量传输。
+    *   但注意，这部分增量传输的数据源是Donor上缓存在GCache文件中的，这个文件有大小限制，如果缺失的数据范围超过已缓存的内容，则自动转为SST传输。如果旧节点上的数据和Donor上的数据不匹配 (例如这个节点离组后人为修改了一点数据)，则自动转为SST传输。
+    *   在除第一个节点离线之外，其他节点离线直接使用systemctl start mysql恢复即可
+
+# MySQL 压力测试
+
+## 常见 MySQL 压力测试工具
+
+常见的 MySQL 压力测试工具包括 mysqlslap，Sysbench，tpcc-mysql，MySQL Benchmark  Suite，MySQL super-smack，MyBench 等，其中 mysqlslap 是 mysql 官方提供的压力测试工具， 安装 mysql 服务就可以直接使用。
+
+
+
+## 使用 mysqlslap 进行压力测试
+
+mysqlslap 来自于 mysql 或 mariadb 包，测试的过程默认生成一个 mysqlslap 的 schema， 生成测试表 t1，查询和插入测试数据， 
+
+mysqlslap 库自动生成，如果已经存在则先删除。用 --only-print 来打印实际的测试过程，整个 测试完成后不会在数据库中留下痕迹
+
+![image-20250111120823597](pic/image-20250111120823597.png)
+
+![image-20250111120830474](pic/image-20250111120830474.png)
+
+## 测试示例
+
+```shell
+mysqlslap -a -c100
+
+# 迭代10次测试,需要登录测试的话，可以通过 -uroot -p123456 方法
+mysqlslap -a -i 10 -c 100
+
+# 50个客户端同时请求，myisam，innodb 各请求200次
+mysqlslap -a -c 50 --number-of-queries 200 --engine=myisam,innodb
+
+# --no-drop不清理
+mysqlslap -a --no-drop
+
+# 残留的数据
+mysql> show databases like '%slap%';
+```
 
