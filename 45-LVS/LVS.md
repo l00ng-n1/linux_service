@@ -711,7 +711,7 @@ cat /proc/net/ip_vs_conn
 
 ```powershell
 五台主机
-一台： 外网主机：192.168.74.12/24   GW:无 仅主机
+一台： 外网主机：192.168.74.12/24   GW:192.168.74.207 仅主机
 
 一台：ROUTER（软路由）
 eth0: NAT   10.0.0.207/24
@@ -719,17 +719,17 @@ eth1: 仅主机 192.168.74.207/24
 启用 IP_FORWARD
 
 一台：lvs服务器
-eth0: NAT   10.0.0.204/24(DIP) GW：10.0.0.207 NAT
+eth0: NAT   10.0.0.204/24(DIP) GW：10.0.0.207
 lo:         10.0.0.200/32(VIP)
 或者VIP配在eht0上
 eth0: NAT   10.0.0.200/24(VIP)
 
 两台RS：nginx
 RS1: 
-  eht0: NAT 10.0.0.205/24(RIP)    GW：10.0.0.207 NAT
+  eht0: NAT 10.0.0.205/24(RIP)    GW：10.0.0.207
   lo:       10.0.0.200/32(VIP)
 RS2: 
-  eht0: NAT 10.0.0.206/24(RIP)    GW：10.0.0.207 NAT
+  eht0: NAT 10.0.0.206/24(RIP)    GW：10.0.0.207
   lo:       10.0.0.200/32(VIP)
 ```
 
@@ -895,7 +895,7 @@ vmware添加新的虚拟网卡192.168.10.0/24
 
 ```powershell
 五台主机
-一台： 外网主机：192.168.74.12/24   GW:无 仅主机
+一台： 外网主机：192.168.74.12/24   GW:192.168.74.207 仅主机
 
 一台：ROUTER（软路由）
 eth0: NAT   10.0.0.207/24
@@ -904,15 +904,15 @@ eth2: 仅主机 192.168.10.207/24
 启用 IP_FORWARD
 
 一台：lvs服务器
-eth0: NAT   10.0.0.204/24(DIP) GW：10.0.0.207 NAT
+eth0: NAT   10.0.0.204/24(DIP) GW：10.0.0.207
 lo:         192.168.10.204/32(VIP)
 
 两台RS：nginx
 RS1: 
-  eht0: NAT 10.0.0.205/24(RIP)    GW：10.0.0.207 NAT
+  eht0: NAT 10.0.0.205/24(RIP)    GW：10.0.0.207
   lo:       192.168.10.204/32(VIP)
 RS2: 
-  eht0: NAT 10.0.0.206/24(RIP)    GW：10.0.0.207 NAT
+  eht0: NAT 10.0.0.206/24(RIP)    GW：10.0.0.207
   lo:       192.168.10.204/32(VIP)
   
 # VIP与DIP，RIP不在同一网段
@@ -1027,3 +1027,180 @@ root@loong:~# curl 192.168.10.204
 ```
 
 ## TUNNEL隧道模式案例
+
+![image-20250113193137081](pic/image-20250113193137081.png)
+
+
+
+
+
+![image-20250113093329663](pic/image-20250113093329663.png)
+
+环境
+
+```powershell
+五台主机
+一台： 外网主机：192.168.74.12/24   GW:192.168.74.207 仅主机
+
+一台：ROUTER（软路由）
+eth0: NAT   10.0.0.207/24
+eth1: 仅主机 192.168.74.207/24
+启用 IP_FORWARD
+
+一台：lvs服务器
+eth0: NAT   10.0.0.204/24(DIP) GW：10.0.0.207
+tunl0:      10.0.0.200/32(VIP)
+
+两台RS：nginx
+RS1: 
+  eht0: NAT 10.0.0.205/24(RIP)    GW：10.0.0.207
+  tunl0:    10.0.0.200/32(VIP)
+RS2: 
+  eht0: NAT 10.0.0.206/24(RIP)    GW：10.0.0.207
+  tunl0:    10.0.0.200/32(VIP)
+```
+
+软路由主机配置
+
+```shell
+# 添加仅主机网卡，配192.168.74.207/24
+
+# 打开ip_forward功能
+vim /etc/sysctl.conf
+net.ipv4.ip_forward = 1
+
+# 应用内核参数
+sysctl -p
+```
+
+外网主机配置网关，模拟外网主机找到公司路由器
+
+```shell
+# team0为仅主机网卡
+ip route add default via 192.168.74.207 dev team0
+
+route -n
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+0.0.0.0         192.168.74.207  0.0.0.0         UG    0      0        0 team0
+192.168.74.0    0.0.0.0         255.255.255.0   U     350    0        0 team0
+```
+
+RS配置
+
+```shell
+# 配置网关指向软路由
+vim /etc/netplan/50-cloud-init.yaml
+routes:
+            -   to: default
+                via: 10.0.0.207
+                
+netplan apply
+
+route -n
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+0.0.0.0         10.0.0.207      0.0.0.0         UG    0      0        0 eth0
+10.0.0.0        0.0.0.0         255.255.255.0   U     0      0        0 eth0
+
+# 安装nignx
+
+# 开启tunnel网卡并配置VIP
+ifconfig tunl0 10.0.0.200 netmask 255.255.255.255 up
+# 或
+ip addr add 10.0.0.200/32  dev tunl0
+ip link set up tunl0
+
+# RS调整内核参数
+# 将all设置完之后，再设置具体网卡，配置才能生效，仅更改具体网卡配置，无效
+echo 1 > /proc/sys/net/ipv4/conf/all/arp_ignore
+echo 2 > /proc/sys/net/ipv4/conf/all/arp_announce
+echo 1 > /proc/sys/net/ipv4/conf/tunl0/arp_ignore
+echo 2 > /proc/sys/net/ipv4/conf/tunl0/arp_announce
+```
+
+LVS服务器配置
+
+```shell
+# 配置网关指向软路由，作用是正常通讯
+vim /etc/netplan/50-cloud-init.yaml
+routes:
+            -   to: default
+                via: 10.0.0.207
+                
+netplan apply
+
+route -n
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+0.0.0.0         10.0.0.207      0.0.0.0         UG    0      0        0 eth0
+10.0.0.0        0.0.0.0         255.255.255.0   U     0      0        0 eth0
+
+#如果LVS没有配置网关（网关随意，只有要即可），也可以通过修改内核关闭路径反向校验实现
+echo "0" > /proc/sys/net/ipv4/conf/all/rp_filter
+echo "0" > /proc/sys/net/ipv4/conf/eth0/rp_filter
+
+ #开启tunnel网卡并配置VIP
+ifconfig tunl0 10.0.0.100 netmask 255.255.255.255 up
+# 或
+ip addr add 10.0.0.100/32  dev tunl0
+ip link set up tunl0
+
+# 添加LVS规则
+ipvsadm -A -t 10.0.0.200:80 -s rr
+ipvsadm -a -t 10.0.0.200:80 -r 10.0.0.205 -i
+ipvsadm -a -t 10.0.0.200:80 -r 10.0.0.206 -i 
+
+ipvsadm -Ln
+```
+
+外网主机测试
+
+```shell
+root@loong:~# curl 10.0.0.200
+206
+root@loong:~# curl 10.0.0.200
+205
+
+while :;do curl 10.0.0.100;sleep 0.3;done
+```
+
+![image-20250113142947021](pic/image-20250113142947021.png)
+
+握手过程，黑色报文为LVS发往RS的ipip协议报文
+
+
+
+# LVS 高可用性实现
+
+**LVS 不可用时**：
+
+Director不可用，整个系统将不可用；SPoF Single Point of Failure
+
+解决方案：高可用，keepalived、heartbeat/corosync
+
+**RS 不可用时：**
+
+某RS不可用时，Director依然会调度请求至此RS
+
+解决方案： 由Director对各RS健康状态进行检查，失败时禁用，成功时启用
+
+常用解决方案:
+
+*   keepalived
+*   heartbeat/corosync 
+*   ldirectord
+
+检测方式：
+
+*   网络层检测，icmp
+*   传输层检测，端口探测
+*   应用层检测，请求某关键资源
+
+RS全不用时：backup server, sorry server 
+
+# 常见面试题
+
+*   Linux 集群有哪些分类
+*   正向代理和反向代理区别
+*   四层代理和七层代理的区别
+*   LVS的工作模式有哪些，有什么特点
+*   LVS的调度算法
+*   LVS和Nginx,Haproxy 的区别

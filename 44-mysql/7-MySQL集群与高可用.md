@@ -2258,7 +2258,7 @@ vim /etc/mail.rc
 set from=xxx@163.com
 set smtp=smtp.163.com
 set smtp-auth-user=xxx@163.com
-set smtp-auth-password=BDq6uUPxVJx8GADm
+set smtp-auth-password=xxxx
 set smtp-auth=login
 set ssl-verify=ignore 
 
